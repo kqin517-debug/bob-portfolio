@@ -1,26 +1,35 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Code2,
   Copy,
   Check,
   Terminal,
   FileCode,
-  Sparkles,
   Info,
   Clock,
   Layers,
-  ArrowRight,
 } from "lucide-react";
-import { featuredSnippets, CodeSnippet } from "@/data/snippets";
+import { featuredSnippets } from "@/data/snippets";
 
-export function FeaturedSnippets() {
-  const [selectedSnippetId, setSelectedSnippetId] = useState(
-    featuredSnippets[0].id
-  );
+interface FeaturedSnippetsProps {
+  selectedSnippetId: string;
+  onSelectedSnippetChange: (id: string) => void;
+  selectionNonce: number;
+}
+
+export function FeaturedSnippets({
+  selectedSnippetId,
+  onSelectedSnippetChange,
+  selectionNonce,
+}: FeaturedSnippetsProps) {
   const [activeTab, setActiveTab] = useState<"code" | "explanation">("code");
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    setActiveTab("code");
+    setCopied(false);
+  }, [selectedSnippetId, selectionNonce]);
 
   const currentSnippet =
     featuredSnippets.find((s) => s.id === selectedSnippetId) ||
@@ -33,7 +42,7 @@ export function FeaturedSnippets() {
   };
 
   return (
-    <section id="snippets" className="space-y-5">
+    <section id="snippets" className="space-y-5 scroll-mt-24">
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
@@ -58,7 +67,7 @@ export function FeaturedSnippets() {
             <button
               key={snippet.id}
               onClick={() => {
-                setSelectedSnippetId(snippet.id);
+                onSelectedSnippetChange(snippet.id);
                 setActiveTab("code");
               }}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all border ${

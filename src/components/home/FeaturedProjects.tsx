@@ -1,20 +1,13 @@
 "use client";
 
 import React from "react";
-import {
-  FolderGit2,
-  ExternalLink,
-  Star,
-  Sparkles,
-  ArrowUpRight,
-  Layers,
-} from "lucide-react";
+import { FolderGit2, ExternalLink, Star, ArrowUpRight } from "lucide-react";
 import { GithubIcon } from "@/components/ui/Icons";
 import { featuredProjects } from "@/data/projects";
 
 export function FeaturedProjects() {
   return (
-    <section id="projects" className="space-y-5">
+    <section id="projects" className="space-y-5 scroll-mt-24">
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
@@ -33,91 +26,110 @@ export function FeaturedProjects() {
 
       {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {featuredProjects.map((project) => (
-          <div
-            key={project.id}
-            className="group relative flex flex-col justify-between p-6 rounded-3xl glass-panel glass-panel-hover border border-white/10"
-          >
-            {/* Top ambient highlight on hover */}
-            <div className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        {featuredProjects.map((project) => {
+          const hasLinks = Boolean(project.demoUrl || project.githubUrl);
+          const hasBottomRow = Boolean(
+            project.metrics || project.demoUrl || project.githubUrl
+          );
 
-            <div className="space-y-4">
-              {/* Category & Stars */}
-              <div className="flex items-center justify-between">
-                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-xs font-medium text-slate-300">
-                  <span
-                    className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: project.dotColor }}
-                  />
-                  <span>{project.category}</span>
+          return (
+            <div
+              key={project.id}
+              className="group relative flex flex-col justify-between p-6 rounded-3xl glass-panel glass-panel-hover border border-white/10"
+            >
+              {/* Top ambient highlight on hover */}
+              <div className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+              <div className="space-y-4">
+                {/* Category & Stars */}
+                <div className="flex items-center justify-between">
+                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-xs font-medium text-slate-300">
+                    <span
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: project.dotColor }}
+                    />
+                    <span>{project.category}</span>
+                  </div>
+
+                  {project.stars && (
+                    <div className="flex items-center gap-1 text-xs font-mono text-amber-300/90 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+                      <Star className="w-3 h-3 fill-amber-300 text-amber-300" />
+                      <span>{project.stars}</span>
+                    </div>
+                  )}
                 </div>
 
-                <div className="flex items-center gap-1 text-xs font-mono text-amber-300/90 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
-                  <Star className="w-3 h-3 fill-amber-300 text-amber-300" />
-                  <span>{project.stars}</span>
+                {/* Title & Tagline */}
+                <div className="space-y-1">
+                  <h3 className="text-lg font-bold text-white group-hover:text-blue-300 transition-colors flex items-center justify-between">
+                    <span>{project.name}</span>
+                    {hasLinks && (
+                      <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white transition-all transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    )}
+                  </h3>
+                  <p className="text-xs font-medium text-blue-400/90">
+                    {project.tagline}
+                  </p>
                 </div>
-              </div>
 
-              {/* Title & Tagline */}
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-white group-hover:text-blue-300 transition-colors flex items-center justify-between">
-                  <span>{project.name}</span>
-                  <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white transition-all transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </h3>
-                <p className="text-xs font-medium text-blue-400/90">
-                  {project.tagline}
+                {/* Description */}
+                <p className="text-xs text-slate-300/80 leading-relaxed line-clamp-3">
+                  {project.description}
                 </p>
+
+                {/* Tech Tags */}
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {project.technologies.map((tech) => (
+                    <span
+                      key={tech}
+                      className="px-2 py-0.5 text-[10px] font-mono rounded-md bg-white/[0.03] text-slate-400 border border-white/[0.06]"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
               </div>
 
-              {/* Description */}
-              <p className="text-xs text-slate-300/80 leading-relaxed line-clamp-3">
-                {project.description}
-              </p>
+              {/* Bottom Actions & Metrics */}
+              {hasBottomRow && (
+                <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs">
+                  {project.metrics ? (
+                    <span className="font-mono text-slate-400 text-[11px]">
+                      {project.metrics}
+                    </span>
+                  ) : (
+                    <span />
+                  )}
 
-              {/* Tech Tags */}
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {project.technologies.map((tech) => (
-                  <span
-                    key={tech}
-                    className="px-2 py-0.5 text-[10px] font-mono rounded-md bg-white/[0.03] text-slate-400 border border-white/[0.06]"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
+                  <div className="flex items-center gap-2">
+                    {project.demoUrl && (
+                      <a
+                        href={project.demoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.12] text-slate-300 hover:text-white border border-white/10 transition-all"
+                        title="Live Demo"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+                    {project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.12] text-slate-300 hover:text-white border border-white/10 transition-all"
+                        title="Source Code"
+                      >
+                        <GithubIcon className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-
-            {/* Bottom Actions & Metrics */}
-            <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs">
-              <span className="font-mono text-slate-400 text-[11px]">
-                {project.metrics}
-              </span>
-
-              <div className="flex items-center gap-2">
-                {project.demoUrl && (
-                  <a
-                    href={project.demoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.12] text-slate-300 hover:text-white border border-white/10 transition-all"
-                    title="Live Demo"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                )}
-                <a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.12] text-slate-300 hover:text-white border border-white/10 transition-all"
-                  title="Source Code"
-                >
-                  <GithubIcon className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

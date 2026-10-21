@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { AmbientBackground } from "@/components/ui/AmbientBackground";
+import { profileData } from "@/data/profile";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Mike Chen | Developer Code Portfolio & Glassmorphism Hub",
+  title: `${profileData.name} | Developer Code Portfolio & Glassmorphism Hub`,
   description:
     "高质感个人开发者代码分享主页。集成高质量代码片段库 (Snippets Hub)、代表开源项目与现代 Web 工程架构沉淀。",
   keywords: [

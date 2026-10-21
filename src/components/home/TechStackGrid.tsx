@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Cpu, Layers, Server, Terminal, Sparkles, CheckCircle2 } from "lucide-react";
+import { Cpu, Layers, Server, Terminal } from "lucide-react";
 
 export function TechStackGrid() {
   const stackCategories = [
@@ -10,10 +10,10 @@ export function TechStackGrid() {
       icon: Layers,
       accent: "#3865FF",
       skills: [
-        { name: "React 19 & Next.js 15", level: "98%", note: "App Router / Server Actions / SSG" },
-        { name: "TypeScript", level: "95%", note: "Advanced Type Gym & Generics" },
-        { name: "Tailwind CSS & CSS Tokens", level: "96%", note: "Design Systems & Glassmorphism" },
-        { name: "Framer Motion & WebGL", level: "85%", note: "Fluid Micro-Interactions" },
+        { name: "React 19 & Next.js 15", note: "App Router / Server Actions / SSG" },
+        { name: "TypeScript", note: "Advanced Type Gym & Generics" },
+        { name: "Tailwind CSS & CSS Tokens", note: "Design Systems & Glassmorphism" },
+        { name: "Framer Motion & WebGL", note: "Fluid Micro-Interactions" },
       ],
     },
     {
@@ -21,10 +21,10 @@ export function TechStackGrid() {
       icon: Server,
       accent: "#21FF6B",
       skills: [
-        { name: "Node.js & Bun", level: "92%", note: "High-Throughput Microservices" },
-        { name: "Rust", level: "80%", note: "Wasm & High-Performance CLI Tools" },
-        { name: "PostgreSQL & Prisma", level: "90%", note: "Schema Design & Index Optimization" },
-        { name: "Redis & KV Caches", level: "88%", note: "Distributed State & PubSub" },
+        { name: "Node.js & Bun", note: "High-Throughput Microservices" },
+        { name: "Rust", note: "Wasm & High-Performance CLI Tools" },
+        { name: "PostgreSQL & Prisma", note: "Schema Design & Index Optimization" },
+        { name: "Redis & KV Caches", note: "Distributed State & PubSub" },
       ],
     },
     {
@@ -32,16 +32,16 @@ export function TechStackGrid() {
       icon: Terminal,
       accent: "#FF4C24",
       skills: [
-        { name: "Docker & Containerization", level: "90%", note: "Multi-Stage Lightweight Builds" },
-        { name: "GitHub Actions CI/CD", level: "92%", note: "Automated Test & Pages Deploy" },
-        { name: "Cloudflare Workers & Edge", level: "86%", note: "Serverless Global Routing" },
-        { name: "Vite, Turbopack, Shiki", level: "94%", note: "Sub-Second Build & Highlighting" },
+        { name: "Docker & Containerization", note: "Multi-Stage Lightweight Builds" },
+        { name: "GitHub Actions CI/CD", note: "Automated Test & Pages Deploy" },
+        { name: "Cloudflare Workers & Edge", note: "Serverless Global Routing" },
+        { name: "Vite, Turbopack, Shiki", note: "Sub-Second Build & Highlighting" },
       ],
     },
   ];
 
   return (
-    <section id="tech-stack" className="space-y-5">
+    <section id="tech-stack" className="space-y-5 scroll-mt-24">
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
@@ -65,7 +65,7 @@ export function TechStackGrid() {
           return (
             <div
               key={category.title}
-              className="p-6 rounded-3xl glass-panel glass-panel-hover border border-white/10 flex flex-col justify-between"
+              className="p-6 rounded-3xl glass-panel glass-panel-hover border border-white/10"
             >
               <div className="space-y-4">
                 <div className="flex items-center gap-3 pb-3 border-b border-white/[0.08]">
@@ -82,42 +82,16 @@ export function TechStackGrid() {
 
                 <div className="space-y-3.5">
                   {category.skills.map((skill) => (
-                    <div key={skill.name} className="space-y-1.5">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-medium text-slate-200">
-                          {skill.name}
-                        </span>
-                        <span className="font-mono text-[11px] text-slate-400">
-                          {skill.level}
-                        </span>
-                      </div>
-
-                      {/* Fluency Gauge with glowing bar */}
-                      <div className="h-1.5 w-full bg-white/[0.05] rounded-full overflow-hidden p-[1px]">
-                        <div
-                          className="h-full rounded-full transition-all duration-700 ease-out"
-                          style={{
-                            width: skill.level,
-                            backgroundColor: category.accent,
-                            boxShadow: `0 0 8px ${category.accent}80`,
-                          }}
-                        />
-                      </div>
-
+                    <div key={skill.name} className="space-y-1">
+                      <p className="text-xs font-medium text-slate-200">
+                        {skill.name}
+                      </p>
                       <p className="text-[10px] text-slate-400 font-mono">
                         {skill.note}
                       </p>
                     </div>
                   ))}
                 </div>
-              </div>
-
-              <div className="mt-5 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] text-slate-400">
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                  Production Ready
-                </span>
-                <span className="font-mono">Verified 2026</span>
               </div>
             </div>
           );

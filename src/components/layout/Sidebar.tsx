@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import {
   LayoutDashboard,
   Code2,
@@ -14,20 +13,18 @@ import {
   Search,
   Sparkles,
   ArrowUpRight,
-  Sun,
-  Moon,
   ChevronRight,
-  Menu,
   X,
 } from "lucide-react";
 import { profileData } from "@/data/profile";
 import { featuredSnippets } from "@/data/snippets";
 import { assetPath } from "@/lib/utils";
+import { ShortcutHint } from "@/components/ui/ShortcutHint";
 import type { LucideIcon } from "lucide-react";
 
 interface SidebarProps {
   activeSection: string;
-  setActiveSection: (sec: string) => void;
+  onNavigateSection: (sec: string) => void;
   onOpenSearch: () => void;
   isMobileOpen: boolean;
   setIsMobileOpen: (open: boolean) => void;
@@ -49,23 +46,21 @@ interface NavItem {
 
 export function Sidebar({
   activeSection,
-  setActiveSection,
+  onNavigateSection,
   onOpenSearch,
   isMobileOpen,
   setIsMobileOpen,
 }: SidebarProps) {
-  const [isDark, setIsDark] = useState(true);
   const [projectsExpanded, setProjectsExpanded] = useState(true);
 
   /**
-   * The `setActiveSection` prop is wired to `scrollToSection` in src/app/page.tsx:
-   * it stores the id AND scrolls the matching `#<id>` element into view. Every
-   * navigation target therefore has to be an id that really exists in the page
-   * (#snippets, #projects, #tech-stack), and the mobile drawer has to be closed
-   * here so the scroll is actually visible on small screens.
+   * `onNavigateSection` is wired to `scrollToSection` in src/app/page.tsx and
+   * only scrolls. The active highlight itself is owned by the scroll-spy
+   * observer, so every target must be an id that really exists in the page.
+   * The mobile drawer is closed here so the scroll is visible on small screens.
    */
   const navigateToSection = (sectionId: string) => {
-    setActiveSection(sectionId);
+    onNavigateSection(sectionId);
     if (typeof window !== "undefined" && window.innerWidth < 1024) {
       setIsMobileOpen(false);
     }
@@ -101,7 +96,6 @@ export function Sidebar({
       id: "tech-stack",
       label: "Tech Arsenal",
       icon: Cpu,
-      badge: "v2.5",
     },
     {
       id: "analytics",
@@ -140,22 +134,10 @@ export function Sidebar({
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Dark/Light Switch matching Figma _switch */}
-            <button
-              onClick={() => setIsDark(!isDark)}
-              className="flex items-center p-1 rounded-full bg-black/40 border border-white/10 hover:border-white/25 transition-all text-slate-300 hover:text-white"
-              title="Toggle Theme"
-            >
-              {isDark ? (
-                <Moon className="w-4 h-4 text-blue-400 p-0.5" />
-              ) : (
-                <Sun className="w-4 h-4 text-amber-300 p-0.5" />
-              )}
-            </button>
-
             {/* Mobile close button */}
             <button
               onClick={() => setIsMobileOpen(false)}
+              aria-label="Close navigation menu"
               className="lg:hidden p-1 text-slate-400 hover:text-white"
             >
               <X className="w-5 h-5" />
@@ -195,8 +177,11 @@ export function Sidebar({
               <h2 className="text-base font-bold text-white truncate tracking-tight">
                 {profileData.name}
               </h2>
-              <p className="text-[11px] text-slate-400 truncate">
-                Full-Stack Crafter
+              <p
+                className="text-[11px] text-slate-400 truncate"
+                title={profileData.role}
+              >
+                {profileData.shortRole}
               </p>
             </div>
           </div>
@@ -212,9 +197,7 @@ export function Sidebar({
               <Search className="w-4 h-4 text-slate-400 group-hover:text-blue-400 transition-colors" />
               <span>Search code, tools...</span>
             </div>
-            <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-white/10 border border-white/15 rounded text-slate-300">
-              ⌘K
-            </kbd>
+            <ShortcutHint className="px-1.5 py-0.5 text-[10px] font-mono bg-white/10 border border-white/15 rounded text-slate-300" />
           </button>
         </div>
 
@@ -362,7 +345,7 @@ export function Sidebar({
           </div>
 
           <a
-            href="mailto:developer@example.com"
+            href={`mailto:${profileData.links.email}`}
             className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.04] transition-all"
           >
             <div className="flex items-center gap-3">
@@ -376,7 +359,7 @@ export function Sidebar({
         {/* Bottom CTA Banner matching Figma _button-full-access */}
         <div className="p-4 border-t border-white/[0.08]">
           <a
-            href="https://github.com"
+            href={profileData.links.github}
             target="_blank"
             rel="noopener noreferrer"
             className="group relative flex items-center justify-between p-3 rounded-2xl overflow-hidden glass-cta-button transition-all duration-300 hover:scale-[1.02] hover:shadow-glow"
@@ -390,9 +373,9 @@ export function Sidebar({
               </div>
               <div className="text-left">
                 <p className="text-xs font-bold text-white tracking-tight">
-                  Star on GitHub
+                  GitHub Profile
                 </p>
-                <p className="text-[10px] text-blue-200/80">Open Source Hub</p>
+                <p className="text-[10px] text-blue-200/80">Connect &amp; Explore</p>
               </div>
             </div>
 

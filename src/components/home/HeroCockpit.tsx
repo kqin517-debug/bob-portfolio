@@ -7,35 +7,45 @@ import {
   FolderGit2,
   Copy,
   Check,
-  Terminal,
-  Sparkles,
   ArrowRight,
-  ShieldCheck,
   Zap,
 } from "lucide-react";
 import { profileData } from "@/data/profile";
+import { featuredSnippets } from "@/data/snippets";
+import { featuredProjects } from "@/data/projects";
 
 interface HeroCockpitProps {
   onNavigateSnippets: () => void;
   onNavigateProjects: () => void;
-  onOpenSearch: () => void;
 }
 
 export function HeroCockpit({
   onNavigateSnippets,
   onNavigateProjects,
-  onOpenSearch,
 }: HeroCockpitProps) {
   const [copied, setCopied] = useState(false);
 
+  const metrics = [
+    {
+      label: "Code Snippets",
+      value: String(featuredSnippets.length),
+      description: "本页收录的代码片段",
+    },
+    {
+      label: "Featured Projects",
+      value: String(featuredProjects.length),
+      description: "本页展示的项目条目",
+    },
+  ];
+
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText("developer@example.com");
+    navigator.clipboard.writeText(profileData.links.email);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <section id="overview" className="relative space-y-6">
+    <section id="overview" className="relative space-y-6 scroll-mt-24">
       {/* Hero Banner Glass Container */}
       <div className="relative overflow-hidden rounded-3xl glass-panel p-6 sm:p-8 md:p-10 border border-white/15">
         {/* Ambient Top Glow Orbs inside the card */}
@@ -123,22 +133,17 @@ export function HeroCockpit({
         </div>
       </div>
 
-      {/* 4 Bento Metrics Cards (Inspired by Figma Dashboard Metrics) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {profileData.metrics.map((metric, idx) => (
+      {/* Derived metrics only: no fabricated counts */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {metrics.map((metric) => (
           <div
             key={metric.label}
             className="p-5 rounded-2xl glass-panel-subtle glass-panel-hover border border-white/10 flex flex-col justify-between"
           >
-            <div className="flex items-center justify-between mb-3">
+            <div className="mb-3">
               <span className="text-xs font-medium text-slate-400">
                 {metric.label}
               </span>
-              {metric.trend && (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                  {metric.trend}
-                </span>
-              )}
             </div>
 
             <div className="space-y-1">

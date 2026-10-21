@@ -182,15 +182,17 @@ import { assetPath } from "@/lib/utils";
 侧边栏的片段数量徽标会自动跟随 `featuredSnippets.length`，无需手动同步。
 （**当前为占位示例数据**，见下方第 5 节。）
 
-新增项目：编辑 `src/data/projects.ts`。
-修改个人信息：编辑 `src/data/profile.ts`。
+新增项目：编辑 `src/data/projects.ts`。其中 `stars`、`metrics`、`demoUrl`、`githubUrl`
+均为可选字段，留空时对应 UI（星标、指标、外链入口）会自动隐藏。
+修改个人信息与社交链接：编辑 `src/data/profile.ts`（`links` 统一提供邮箱 / GitHub / Twitter）。
+个人身份与链接仍为占位值，见下方第 5 节。
 
 ---
 
 ## 4. 已知限制（待后续阶段处理）
 
-- **主题切换尚未生效**：侧边栏的深/浅色按钮只切换图标状态，未真正切换 `<html>` 的 class
-  也未做本地持久化；`next-themes` 尚未安装。全站实际上固定为深色模式。
+- **主题固定为深色单主题**：原假的深/浅色切换按钮已移除，`<html>` 固定为 `dark`。
+  若要做浅色主题，需要系统性重做玻璃面板与文字色，留作后续独立设计阶段。
 - **语法高亮为轻量正则实现**：`FeaturedSnippets.tsx` 中的 `highlightSyntax` 只识别 JS/TS 关键字，
   非 JS/TS 语言（如已有片段中的 CSS）不会着色。方案中的 Shiki 尚未接入。
 - **路由尚未拆分**：目前只有 `/` 一条路由，`/snippets`、`/projects`、`/about` 及片段详情页尚未实现。
@@ -204,9 +206,11 @@ import { assetPath } from "@/lib/utils";
 
 | 位置 | 当前占位值 |
 | :--- | :--- |
-| `src/data/profile.ts` | 姓名 `Mike Chen`、邮箱 `developer@example.com` |
-| `src/data/profile.ts` | `metrics` 中的 `48+`、`3.2k`、`99.98%`、`6+ Yrs` 等指标 |
-| `src/data/profile.ts` | GitHub / Twitter 指向 `https://github.com`、`https://twitter.com` 通用地址 |
-| `src/data/projects.ts` | 3 个示例项目及其 `demo.example.com`、`github.com/example/...` 链接；`99.99% Hit Ratio` 虚构指标 |
-| `src/components/layout/Sidebar.tsx` | Tech Arsenal 徽标 `v2.5` |
-| `src/components/layout/HeaderToolbar.tsx` | 通知铃铛上的 `3`（无真实数据来源） |
+| `src/data/profile.ts` | 姓名 `Mike Chen`、邮箱 `developer@example.com`、通用 GitHub / Twitter 链接、bio、状态与头像 |
+| `src/data/snippets.ts` | 3 条示例代码片段及其说明 |
+| `src/data/projects.ts` | 3 个示例项目文案；`stars` / `metrics` / 外链已清空，字段保留为可选 |
+| `src/app/page.tsx` 页脚 | 页脚标识与设计说明 |
+
+Hero 的 `Code Snippets` / `Featured Projects` 数量由本地数据派生，不再展示虚构数字。
+技能百分比、通知铃铛角标、`v2.5`、`Verified 2026`、`Production Ready` 等已移除。
+在替换真实身份、项目与片段内容之前，仍请勿公开部署。

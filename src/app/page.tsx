@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { HeaderToolbar } from "@/components/layout/HeaderToolbar";
 import { HeroCockpit } from "@/components/home/HeroCockpit";
@@ -8,31 +8,97 @@ import { FeaturedSnippets } from "@/components/home/FeaturedSnippets";
 import { FeaturedProjects } from "@/components/home/FeaturedProjects";
 import { TechStackGrid } from "@/components/home/TechStackGrid";
 import { SearchCommandModal } from "@/components/home/SearchCommandModal";
-import {
-  Code2,
-  Heart,
-  ArrowUp,
-  Sparkles,
-  Layers,
-  Terminal,
-} from "lucide-react";
+import { Code2, ArrowUp } from "lucide-react";
 import { GithubIcon } from "@/components/ui/Icons";
+import { profileData } from "@/data/profile";
+import { featuredSnippets } from "@/data/snippets";
+
+const SECTION_IDS = ["overview", "snippets", "projects", "tech-stack"] as const;
 
 export default function HomePage() {
-  const [activeSection, setActiveSection] = useState("overview");
+  const [activeSection, setActiveSection] = useState<string>("overview");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [selectedSnippetId, setSelectedSnippetId] = useState(
+    featuredSnippets[0].id
+  );
+  const [snippetSelectionNonce, setSnippetSelectionNonce] = useState(0);
+  const [pendingScrollTarget, setPendingScrollTarget] = useState<string | null>(
+    null
+  );
 
-  const scrollToSection = (sectionId: string) => {
-    setActiveSection(sectionId);
+  const scrollToSection = useCallback((sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  };
+  }, []);
+
+  const openSearch = useCallback(() => {
+    setIsMobileNavOpen(false);
+    setIsSearchOpen(true);
+  }, []);
+
+  const closeSearch = useCallback(() => setIsSearchOpen(false), []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        openSearch();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [openSearch]);
+
+  useEffect(() => {
+    const sections = SECTION_IDS.map((id) =>
+      document.getElementById(id)
+    ).filter((el): el is HTMLElement => el !== null);
+
+    const visible = new Set<Element>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            visible.add(entry.target);
+          } else {
+            visible.delete(entry.target);
+          }
+        });
+
+        if (visible.size === 0) return;
+
+        const topMost = Array.from(visible).reduce((a, b) =>
+          a.getBoundingClientRect().top <= b.getBoundingClientRect().top ? a : b
+        );
+        setActiveSection(topMost.id);
+      },
+      { rootMargin: "-80px 0px -55% 0px", threshold: 0 }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  // The modal restores body scroll in its effect cleanup, so scrolling must
+  // wait until after that cleanup; scrollIntoView is dropped while locked.
+  useEffect(() => {
+    if (!pendingScrollTarget) return;
+    scrollToSection(pendingScrollTarget);
+    setPendingScrollTarget(null);
+  }, [pendingScrollTarget, scrollToSection]);
 
   const handleSelectSnippet = (id: string) => {
-    scrollToSection("snippets");
+    setSelectedSnippetId(id);
+    setSnippetSelectionNonce((nonce) => nonce + 1);
+    setPendingScrollTarget("snippets");
+  };
+
+  const handleSelectProject = () => {
+    setPendingScrollTarget("projects");
   };
 
   return (
@@ -40,8 +106,8 @@ export default function HomePage() {
       {/* Figma-Inspired Glass Sidebar */}
       <Sidebar
         activeSection={activeSection}
-        setActiveSection={scrollToSection}
-        onOpenSearch={() => setIsSearchOpen(true)}
+        onNavigateSection={scrollToSection}
+        onOpenSearch={openSearch}
         isMobileOpen={isMobileNavOpen}
         setIsMobileOpen={setIsMobileNavOpen}
       />
@@ -51,7 +117,7 @@ export default function HomePage() {
         {/* Top Header Bar */}
         <HeaderToolbar
           onOpenMobileMenu={() => setIsMobileNavOpen(true)}
-          onOpenSearch={() => setIsSearchOpen(true)}
+          onOpenSearch={openSearch}
           activeSectionTitle={activeSection}
         />
 
@@ -61,11 +127,14 @@ export default function HomePage() {
           <HeroCockpit
             onNavigateSnippets={() => scrollToSection("snippets")}
             onNavigateProjects={() => scrollToSection("projects")}
-            onOpenSearch={() => setIsSearchOpen(true)}
           />
 
           {/* Section 2: Featured Code Snippets Showcase */}
-          <FeaturedSnippets />
+          <FeaturedSnippets
+            selectedSnippetId={selectedSnippetId}
+            onSelectedSnippetChange={setSelectedSnippetId}
+            selectionNonce={snippetSelectionNonce}
+          />
 
           {/* Section 3: Featured Open Source Projects */}
           <FeaturedProjects />
@@ -81,7 +150,7 @@ export default function HomePage() {
                   <Code2 className="w-4 h-4" />
                 </span>
                 <span className="font-semibold text-slate-200">
-                  Mike Chen Code Portfolio
+                  {profileData.name} Code Portfolio
                 </span>
                 <span className="text-slate-600">/</span>
                 <span className="font-mono text-[11px] text-slate-400">
@@ -91,13 +160,13 @@ export default function HomePage() {
 
               <div className="flex items-center gap-4 text-[11px]">
                 <a
-                  href="https://github.com"
+                  href={profileData.links.github}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors flex items-center gap-1"
                 >
                   <GithubIcon className="w-3.5 h-3.5" />
-                  <span>GitHub Repository</span>
+                  <span>GitHub</span>
                 </a>
                 <span className="text-slate-600">·</span>
                 <button
@@ -116,11 +185,12 @@ export default function HomePage() {
           </footer>
         </div>
 
-        {/* Global Search Command Modal (⌘K) */}
+        {/* Global Search Command Modal (Ctrl/⌘K) */}
         <SearchCommandModal
           isOpen={isSearchOpen}
-          onClose={() => setIsSearchOpen(false)}
+          onClose={closeSearch}
           onSelectSnippet={handleSelectSnippet}
+          onSelectProject={handleSelectProject}
         />
       </main>
     </div>
