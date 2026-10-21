@@ -1,0 +1,130 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+# GitHub Pages 部署所需的最小权限集
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只允许一个 Pages 部署；排队中的旧任务取消，但不打断正在进行的发布
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # 项目型 Pages 站点位于 /<repo>/ 子路径，需在构建期注入 basePath。
+      # 但用户型站点（仓库名形如 <user>.github.io）或绑定自定义域名时，站点根在 /，
+      # 此时再加前缀会让全站资源 404。因此：
+      #   - 仓库名为 <user>.github.io 时自动不加前缀；
+      #   - 其余情况用 /<repo>；
+      #   - 需要强制覆盖时，在仓库 Settings → Variables 设置 PAGES_BASE_PATH。
+      #     注意：Actions 的 empty string 与 unset 无法区分，所以“根路径”要写成 "/"，
+      #     由下面的归一化逻辑转成空串。首尾斜杠与重复斜杠都会被规范化处理。
+      - name: Resolve base path
+        id: basepath
+        env:
+          REPO_NAME: ${{ github.event.repository.name }}
+          OVERRIDE: ${{ vars.PAGES_BASE_PATH }}
+        run: |
+          set -euo pipefail
+          if [ -n "${OVERRIDE}" ]; then
+            # 归一化：先删除空白与换行（Variables 允许填多行/空格），
+            # 再把重复斜杠折叠成一个、去掉首尾斜杠。
+            # 注意 ${VAR%/} 只去掉“一个”斜杠，所以去尾必须用循环，不能只写一次。
+            STRIPPED="$(printf '%s' "${OVERRIDE}" | tr -d '[:space:]')"
+            # 去掉空白后必须仍有内容且含斜杠，否则属于"填错了"，而不是"想部署到根路径"。
+            # 若静默回落到根路径，会造成上线后全站 404 而 CI 全绿，所以必须响亮失败。
+            # （要表达根路径，请填 "/"）
+            if [ -z "${STRIPPED}" ] || [[ "${STRIPPED}" != */* ]]; then
+              echo "::error::Invalid PAGES_BASE_PATH '${OVERRIDE}' (use \"/\" for the site root, or a path like /my-repo)"
+              exit 1
+            fi
+            BP="$(printf '%s' "${STRIPPED}" | tr -s '/')"
+            while [[ "${BP}" == */ ]]; do
+              BP="${BP%/}"
+            done
+            BP="${BP#/}"
+            # 折叠+去尾去首之后：空串表示部署在根路径
+            if [ -z "${BP}" ]; then
+              FINAL=""
+            else
+              FINAL="/${BP}"
+            fi
+          elif [[ "${REPO_NAME}" == *.github.io ]]; then
+            FINAL=""
+          else
+            FINAL="/${REPO_NAME}"
+          fi
+          # 兜底自检 1/4：不允许空白。
+          # 否则 "/   " 这类值会让 next build 通过、产物里却出现 "/   /_next/"，
+          # 结果是 CI 全绿但上线后全站 404 —— 唯一会"静默产出坏站点"的路径。
+          if [[ "${FINAL}" == *[[:space:]]* ]]; then
+            echo "::error::Invalid base path '${FINAL}' (must not contain whitespace)"
+            exit 1
+          fi
+          # 兜底自检 2/4：必须是空串，或以 / 开头
+          if [ -n "${FINAL}" ] && [[ "${FINAL}" != /* ]]; then
+            echo "::error::Invalid base path '${FINAL}' (must be empty or start with '/')"
+            exit 1
+          fi
+          # 兜底自检 3/4：不得含重复斜杠。
+          # 归一化已在前面折叠重复斜杠，故这里理论上不可达，保留作纵深防御。
+          if [[ "${FINAL}" == *//* ]]; then
+            echo "::error::Invalid base path '${FINAL}' (must not contain '//')"
+            exit 1
+          fi
+          # 兜底自检 4/4（最强，locale 无关）：字符白名单。
+          # 放在最后是因为它一次覆盖全部情形，包括难以察觉的字符：
+          # NBSP(U+00A0)、全角空格、零宽字符等既不是 [[:space:]] 也看不见，
+          # 会让 next build 通过、上线后全站 404（又是 CI 全绿 + 坏站点）。
+          # 合法 basePath 只有 ASCII：斜杠、字母、数字、点、下划线、波浪号、连字符。
+          if [ -n "${FINAL}" ] && [[ ! "${FINAL}" =~ ^/[A-Za-z0-9._~/-]+$ ]]; then
+            echo "::error::Invalid base path '${FINAL}' (only ASCII [A-Za-z0-9._~/-] is allowed)"
+            exit 1
+          fi
+          echo "Resolved base path: '${FINAL}'"
+          echo "value=${FINAL}" >> "$GITHUB_OUTPUT"
+
+      - name: Build static export
+        run: npm run build
+        env:
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.basepath.outputs.value }}
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

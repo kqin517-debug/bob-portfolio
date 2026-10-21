@@ -1,0 +1,246 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #070913;
+  --foreground: #f8fafc;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(10, 15, 30, 0.3);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(223, 232, 255, 0.22);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(223, 232, 255, 0.45);
+}
+
+/* Opt-out scrollbar utility: hides the bar but keeps the element scrollable.
+   Used by the FeaturedSnippets pill row (horizontal overflow-x-auto). */
+.scrollbar-none {
+  -ms-overflow-style: none; /* legacy Edge / IE */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* =========================================================================
+   AUTHENTIC GLASSMORPHISM SYSTEM (Figma-Engineered & Luminous Frost)
+   ========================================================================= */
+
+/* Primary Glass Panel: Crystal Frost with Internal Specular Reflection */
+.glass-panel {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.03) 38%,
+    rgba(18, 26, 52, 0.42) 100%
+  );
+  backdrop-filter: blur(28px) saturate(210%) brightness(112%);
+  -webkit-backdrop-filter: blur(28px) saturate(210%) brightness(112%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 24px 60px -12px rgba(0, 10, 36, 0.45),
+    0 4px 16px -2px rgba(0, 10, 36, 0.25),
+    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.55),
+    inset 1px 0 0 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 28px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Secondary / Subtle Glass Panel (Bento Cards, Sub-containers) */
+.glass-panel-subtle {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.09) 0%,
+    rgba(255, 255, 255, 0.02) 50%,
+    rgba(15, 22, 44, 0.35) 100%
+  );
+  backdrop-filter: blur(20px) saturate(190%) brightness(108%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%) brightness(108%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 
+    0 12px 32px -8px rgba(0, 8, 30, 0.35),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.45),
+    inset 0 0 18px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Interactive Hover Polish: Light Gathers & Specular Glows */
+.glass-panel-hover {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-panel-hover:hover {
+  border-color: rgba(255, 255, 255, 0.38);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.05) 40%,
+    rgba(24, 36, 72, 0.48) 100%
+  );
+  box-shadow: 
+    0 32px 70px -15px rgba(0, 12, 44, 0.55),
+    0 8px 24px -4px rgba(0, 12, 44, 0.3),
+    inset 0 1.5px 0 0 rgba(255, 255, 255, 0.75),
+    inset 0 0 30px 0 rgba(99, 140, 255, 0.22);
+  transform: translateY(-2px);
+}
+
+/* Figma Active Menu Cell Highlight & Glow */
+.glass-menu-active {
+  background: linear-gradient(
+    180deg,
+    rgba(56, 101, 255, 0.32) 0%,
+    rgba(24, 36, 72, 0.45) 100%
+  );
+  border-left: 3px solid #7c9aff;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 2px 0 16px rgba(124, 154, 255, 0.55);
+}
+
+/* Figma Full Access CTA Gradient Pill */
+.glass-cta-button {
+  background: linear-gradient(180deg, #2b33a8 0%, #0d164d 100%);
+  border: 1px solid rgba(138, 170, 255, 0.4);
+  box-shadow: 
+    0 20px 40px -15px rgba(13, 0, 43, 0.7),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 2px 14px 0 rgba(112, 145, 248, 0.4);
+}
+
+/* Glass traffic light glow */
+.traffic-dot {
+  position: relative;
+  border-radius: 9999px;
+  transition: transform 0.2s ease;
+}
+.traffic-dot::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  right: 2px;
+  height: 40%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, transparent 100%);
+  border-radius: 9999px;
+}
+
+/* Code Syntax Palette */
+.token-keyword { color: #f472b6; font-weight: 600; }
+.token-function { color: #60a5fa; }
+.token-string { color: #34d399; }
+.token-comment { color: #94a3b8; font-style: italic; }
+.token-type { color: #38bdf8; }
+.token-operator { color: #f1f5f9; }
+.token-number { color: #fb923c; }
+.token-boolean { color: #f87171; }
+
+/* Aurora Ambient Lighting Keyframe Animations */
+@keyframes aurora-slow {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate(45px, 35px) scale(1.15);
+    opacity: 1;
+  }
+}
+
+@keyframes aurora-reverse {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(-40px, -30px) scale(1.18);
+    opacity: 1;
+  }
+}
+
+@keyframes aurora-drift {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate(30px, -40px) scale(1.1);
+    opacity: 0.95;
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.12);
+  }
+}
+
+.animate-aurora-slow {
+  animation: aurora-slow 18s ease-in-out infinite;
+}
+
+.animate-aurora-reverse {
+  animation: aurora-reverse 22s ease-in-out infinite;
+}
+
+.animate-aurora-drift {
+  animation: aurora-drift 26s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 12s ease-in-out infinite;
+}
+
+/* =========================================================================
+   SEARCH COMMAND MODAL ENTRANCE
+   Replaces the tailwindcss-animate classes (animate-in / fade-in / duration-200)
+   which are NOT installed in this project. Equivalent 200ms opacity fade:
+   the keyframes and the utility carry their own duration, so no new npm
+   dependency is required (and no extra motion is added).
+   ========================================================================= */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in {
+    animation-duration: 1ms;
+  }
+}
