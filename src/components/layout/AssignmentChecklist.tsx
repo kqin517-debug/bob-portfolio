@@ -60,7 +60,7 @@ export function AssignmentChecklist() {
 
   return (
     <section
-      aria-label="作业区"
+      aria-label="论文区"
       className="mt-5 border-t border-white/[0.06] pb-2 pt-4"
     >
       <div className="flex items-center justify-between pl-3 pr-3">
@@ -72,7 +72,7 @@ export function AssignmentChecklist() {
           className="flex items-center gap-3 rounded-md py-1 text-slate-400 transition-colors hover:text-slate-100"
         >
           <ClipboardList className="h-4 w-4 text-muted" />
-          <span className="text-sm">作业区</span>
+          <span className="text-sm">论文区</span>
           <ChevronDown
             className={`h-3.5 w-3.5 text-muted transition-transform duration-200 ${
               isExpanded ? "" : "-rotate-90"

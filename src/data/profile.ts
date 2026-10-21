@@ -23,7 +23,7 @@ export const profileData: ProfileData = {
   role: "Developer",
   shortRole: "Developer",
   tagline: "收集前端代码片段、工程实践与界面实验。",
-  avatar: "/images/avatar.jpg",
+  avatar: "/images/avatar.png",
   links: {
     email: "kqin517@gmail.com",
     github: "https://github.com/kqin517-debug",
