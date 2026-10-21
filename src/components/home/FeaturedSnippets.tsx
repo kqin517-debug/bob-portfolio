@@ -1,15 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import {
-  Copy,
-  Check,
-  Terminal,
-  FileCode,
-  Info,
-  Clock,
-  Layers,
-} from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { Copy, Check, AlertCircle, FileCode } from "lucide-react";
 import { featuredSnippets } from "@/data/snippets";
 
 interface FeaturedSnippetsProps {
@@ -18,49 +10,62 @@ interface FeaturedSnippetsProps {
   selectionNonce: number;
 }
 
+type CopyState = "idle" | "copied" | "error";
+
 export function FeaturedSnippets({
   selectedSnippetId,
   onSelectedSnippetChange,
   selectionNonce,
 }: FeaturedSnippetsProps) {
   const [activeTab, setActiveTab] = useState<"code" | "explanation">("code");
-  const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    setActiveTab("code");
-    setCopied(false);
-  }, [selectedSnippetId, selectionNonce]);
+  const [copyState, setCopyState] = useState<CopyState>("idle");
+  const resetTimer = useRef<number | null>(null);
 
   const currentSnippet =
     featuredSnippets.find((s) => s.id === selectedSnippetId) ||
     featuredSnippets[0];
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(currentSnippet.code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  useEffect(() => {
+    setActiveTab("code");
+    setCopyState("idle");
+  }, [selectedSnippetId, selectionNonce]);
+
+  useEffect(() => {
+    return () => {
+      if (resetTimer.current) window.clearTimeout(resetTimer.current);
+    };
+  }, []);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(currentSnippet.code);
+      setCopyState("copied");
+    } catch {
+      setCopyState("error");
+    }
+
+    if (resetTimer.current) window.clearTimeout(resetTimer.current);
+    resetTimer.current = window.setTimeout(() => setCopyState("idle"), 2000);
   };
 
   return (
-    <section id="snippets" className="space-y-5 scroll-mt-24">
-      {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+    <section id="snippets" className="scroll-mt-24 space-y-6">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-blue-400 mb-1">
-            <Terminal className="w-3.5 h-3.5" />
-            <span>FEATURED IMPLEMENTATIONS</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            精选代码速递 (Featured Snippets)
+          <p className="mb-2 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">
+            <span className="h-px w-8 bg-accent/50" />
+            Snippets
+          </p>
+          <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+            代码片段
           </h2>
         </div>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-md">
-          本页收录的代码实现，支持一键复制与查看实现说明。
+        <p className="max-w-sm text-xs leading-relaxed text-slate-400 sm:text-right">
+          本页收录的代码实现，支持一键复制与查看说明。
         </p>
       </div>
 
-      {/* Snippet Selector Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
         {featuredSnippets.map((snippet) => {
           const isSelected = snippet.id === selectedSnippetId;
           return (
@@ -70,18 +75,19 @@ export function FeaturedSnippets({
                 onSelectedSnippetChange(snippet.id);
                 setActiveTab("code");
               }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all border ${
+              aria-pressed={isSelected}
+              className={`shrink-0 rounded-lg border px-3 py-1.5 text-xs transition-colors ${
                 isSelected
-                  ? "bg-blue-600/20 border-blue-400/50 text-white shadow-glow"
-                  : "bg-white/[0.03] border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.06]"
+                  ? "border-accent/40 bg-accent-soft text-white"
+                  : "border-white/[0.06] bg-white/[0.02] text-slate-400 hover:border-white/[0.12] hover:text-slate-100"
               }`}
             >
+              {snippet.title.split("：")[0]}
               <span
-                className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: snippet.badgeColor }}
-              />
-              <span>{snippet.title.split("：")[0]}</span>
-              <span className="text-[10px] font-mono text-slate-500 uppercase">
+                className={`ml-2 font-mono text-[10px] uppercase ${
+                  isSelected ? "text-accent" : "text-slate-500"
+                }`}
+              >
                 {snippet.language}
               </span>
             </button>
@@ -89,88 +95,103 @@ export function FeaturedSnippets({
         })}
       </div>
 
-      {/* Main Glass Code Terminal Window (VS Code Style with Glassmorphic Border) */}
-      <div className="rounded-3xl glass-panel overflow-hidden border border-white/15 shadow-2xl">
-        {/* Terminal Header Bar */}
-        <div className="flex items-center justify-between px-5 py-3.5 bg-white/[0.04] backdrop-blur-md border-b border-white/[0.08]">
+      <div className="code-surface overflow-hidden rounded-2xl">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] px-4 py-3 sm:px-5">
           <div className="flex items-center gap-3">
-            {/* Window controls */}
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 traffic-dot bg-[#FF5F56]" />
-              <span className="w-3 h-3 traffic-dot bg-[#FFBD2E]" />
-              <span className="w-3 h-3 traffic-dot bg-[#27C93F]" />
+              <span className="traffic-dot h-3 w-3 bg-[#FF5F56]" />
+              <span className="traffic-dot h-3 w-3 bg-[#FFBD2E]" />
+              <span className="traffic-dot h-3 w-3 bg-[#27C93F]" />
             </div>
 
-            <div className="h-4 w-px bg-white/10 mx-1 hidden sm:block" />
+            <span className="hidden h-4 w-px bg-white/[0.08] sm:block" />
 
-            {/* File Path Tab */}
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-xs font-mono text-slate-300">
-              <FileCode className="w-3.5 h-3.5 text-blue-400" />
-              <span>{currentSnippet.id}.{currentSnippet.language === "css" ? "css" : "ts"}</span>
+            <div className="hidden items-center gap-2 rounded-md border border-white/[0.06] bg-white/[0.03] px-2.5 py-1 font-mono text-[11px] text-slate-400 sm:flex">
+              <FileCode className="h-3.5 w-3.5 text-slate-500" />
+              {currentSnippet.id}.
+              {currentSnippet.language === "css" ? "css" : "ts"}
             </div>
           </div>
 
-          {/* Right Controls: Tab toggle & Copy Button */}
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="flex rounded-lg bg-white/[0.04] p-0.5 border border-white/10 text-xs">
+          <div className="flex items-center gap-2">
+            <div className="flex rounded-lg border border-white/[0.06] bg-white/[0.03] p-0.5 text-[11px]">
               <button
                 onClick={() => setActiveTab("code")}
-                className={`px-3 py-1 rounded-md transition-all font-medium ${
+                aria-pressed={activeTab === "code"}
+                className={`rounded-md px-2.5 py-1 transition-colors ${
                   activeTab === "code"
-                    ? "bg-blue-600 text-white shadow-sm"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-accent-soft text-accent"
+                    : "text-slate-500 hover:text-slate-200"
                 }`}
               >
-                Code
+                代码
               </button>
               <button
                 onClick={() => setActiveTab("explanation")}
-                className={`px-3 py-1 rounded-md transition-all font-medium ${
+                aria-pressed={activeTab === "explanation"}
+                className={`rounded-md px-2.5 py-1 transition-colors ${
                   activeTab === "explanation"
-                    ? "bg-blue-600 text-white shadow-sm"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-accent-soft text-accent"
+                    : "text-slate-500 hover:text-slate-200"
                 }`}
               >
-                Explanation
+                说明
               </button>
             </div>
 
             <button
               onClick={handleCopy}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 text-xs font-medium text-slate-200 transition-all active:scale-95"
-              title="Copy snippet code"
+              title="复制代码"
+              className={`flex items-center gap-1.5 rounded-lg border border-white/[0.07] bg-white/[0.03] px-2.5 py-1 text-[11px] transition-colors hover:bg-white/[0.06] ${
+                copyState === "error"
+                  ? "text-amber-300"
+                  : copyState === "copied"
+                    ? "text-emerald-300"
+                    : "text-slate-400 hover:text-slate-100"
+              }`}
             >
-              {copied ? (
+              {copyState === "copied" ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="text-emerald-400 font-mono">Copied!</span>
+                  <Check className="h-3.5 w-3.5" />
+                  已复制
+                </>
+              ) : copyState === "error" ? (
+                <>
+                  <AlertCircle className="h-3.5 w-3.5" />
+                  复制失败
                 </>
               ) : (
                 <>
-                  <Copy className="w-3.5 h-3.5 text-slate-400" />
-                  <span className="font-mono">Copy</span>
+                  <Copy className="h-3.5 w-3.5" />
+                  复制
                 </>
               )}
             </button>
+            <span aria-live="polite" className="sr-only">
+              {copyState === "copied"
+                ? "代码已复制到剪贴板"
+                : copyState === "error"
+                  ? "复制失败，请手动选择代码"
+                  : ""}
+            </span>
           </div>
         </div>
 
-        {/* Snippet Context Bar */}
-        <div className="px-6 py-3 bg-white/[0.015] border-b border-white/[0.06] flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-3">
-            <h3 className="font-semibold text-white tracking-tight">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] px-4 py-3 text-xs sm:px-5">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <h3 className="truncate font-medium text-slate-100">
               {currentSnippet.title}
             </h3>
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-white/[0.05] border border-white/10 text-slate-300">
+            <span className="shrink-0 rounded border border-white/[0.06] bg-white/[0.03] px-1.5 py-0.5 font-mono text-[10px] text-slate-400">
               {currentSnippet.complexity}
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
             {currentSnippet.tags.map((tag) => (
               <span
                 key={tag}
-                className="px-2 py-0.5 rounded text-[10px] bg-blue-500/10 text-blue-300 border border-blue-500/20"
+                className="rounded border border-accent/20 bg-accent-soft px-1.5 py-0.5 text-[10px] text-accent"
               >
                 #{tag}
               </span>
@@ -178,14 +199,16 @@ export function FeaturedSnippets({
           </div>
         </div>
 
-        {/* Content Body: Code View or Explanation View */}
         {activeTab === "code" ? (
-          <div className="p-4 sm:p-6 overflow-x-auto bg-[#0a1022]/45 backdrop-blur-md">
-            <pre className="font-mono text-xs sm:text-sm leading-relaxed text-slate-200">
-              <code>
+          <div className="overflow-x-auto bg-[#070910]">
+            <pre className="p-4 font-mono text-[12px] leading-[1.7] text-slate-300 sm:p-5 sm:text-[13px]">
+              <code className="inline-block min-w-full">
                 {currentSnippet.code.split("\n").map((line, idx) => (
-                  <div key={idx} className="table-row group hover:bg-white/[0.04]">
-                    <span className="table-cell select-none pr-4 sm:pr-6 text-right text-slate-500 font-mono text-xs group-hover:text-slate-300">
+                  <div
+                    key={idx}
+                    className="table-row group hover:bg-white/[0.03]"
+                  >
+                    <span className="table-cell select-none pr-4 text-right font-mono text-xs text-slate-600 group-hover:text-slate-500 sm:pr-6">
                       {idx + 1}
                     </span>
                     <span className="table-cell whitespace-pre">
@@ -197,33 +220,28 @@ export function FeaturedSnippets({
             </pre>
           </div>
         ) : (
-          <div className="p-6 sm:p-8 space-y-5 bg-[#0a1022]/45 backdrop-blur-md text-sm leading-relaxed">
+          <div className="space-y-6 bg-[#070910] p-5 text-sm leading-[1.8] sm:p-7">
             <div className="space-y-2">
-              <h4 className="text-xs font-mono uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
-                <Info className="w-3.5 h-3.5" /> 核心原理解析 (Core Architecture)
+              <h4 className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-500">
+                核心思路
               </h4>
-              <p className="text-slate-300 leading-relaxed bg-white/[0.02] p-4 rounded-xl border border-white/10">
+              <p className="text-pretty text-slate-300">
                 {currentSnippet.explanation}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-1">
-                <span className="text-xs text-slate-400 flex items-center gap-1">
-                  <Layers className="w-3.5 h-3.5 text-blue-400" /> 内存与复杂度指标
-                </span>
-                <p className="text-sm font-mono font-bold text-white">
+            <div className="grid gap-3 border-t border-white/[0.06] pt-5 sm:grid-cols-2">
+              <div className="flex items-center justify-between gap-3 text-xs">
+                <span className="text-slate-500">复杂度</span>
+                <span className="font-mono text-slate-300">
                   {currentSnippet.complexity}
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-1">
-                <span className="text-xs text-slate-400 flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-emerald-400" /> 最近更新
                 </span>
-                <p className="text-sm font-mono font-bold text-white">
+              </div>
+              <div className="flex items-center justify-between gap-3 text-xs">
+                <span className="text-slate-500">更新于</span>
+                <span className="font-mono text-slate-300">
                   {currentSnippet.updatedAt}
-                </p>
+                </span>
               </div>
             </div>
           </div>
@@ -235,13 +253,17 @@ export function FeaturedSnippets({
 
 // Lightweight syntax highlighter for preview rendering
 function highlightSyntax(line: string): React.ReactNode {
-  // If comment line
-  if (line.trim().startsWith("//") || line.trim().startsWith("/*") || line.trim().startsWith("*")) {
+  if (
+    line.trim().startsWith("//") ||
+    line.trim().startsWith("/*") ||
+    line.trim().startsWith("*")
+  ) {
     return <span className="token-comment">{line}</span>;
   }
 
-  // Token regex replacement matching keywords, functions, types, strings
-  const parts = line.split(/(\b(?:import|export|from|function|interface|const|let|var|return|async|await|new|type|as|default)\b|\b(?:useRef|useCallback|useEffect|setTimeout|clearTimeout|Promise|Set|Array|Object)\b|'[^']*'|"[^"]*"|`[^`]*`)/g);
+  const parts = line.split(
+    /(\b(?:import|export|from|function|interface|const|let|var|return|async|await|new|type|as|default)\b|\b(?:useRef|useCallback|useEffect|setTimeout|clearTimeout|Promise|Set|Array|Object)\b|'[^']*'|"[^"]*"|`[^`]*`)/g
+  );
 
   return parts.map((part, i) => {
     if (

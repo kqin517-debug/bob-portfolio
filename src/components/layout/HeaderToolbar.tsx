@@ -4,13 +4,12 @@ import React from "react";
 import { Menu, Search, Mail } from "lucide-react";
 import { GithubIcon, TwitterIcon } from "@/components/ui/Icons";
 import { profileData } from "@/data/profile";
-import { ShortcutHint } from "@/components/ui/ShortcutHint";
 
 const SECTION_LABELS: Record<string, string> = {
-  overview: "Overview",
-  snippets: "Snippets",
-  projects: "Projects",
-  "tech-stack": "Tech Stack",
+  overview: "概览",
+  snippets: "代码片段",
+  projects: "项目",
+  "tech-stack": "技术栈",
 };
 
 interface HeaderToolbarProps {
@@ -25,75 +24,64 @@ export function HeaderToolbar({
   activeSectionTitle,
 }: HeaderToolbarProps) {
   return (
-    <header className="sticky top-4 z-30 mb-6 flex items-center justify-between px-5 py-3 rounded-2xl glass-panel-subtle shadow-glass-sm">
-      {/* Left: Mobile hamburger & Breadcrumbs */}
-      <div className="flex items-center gap-3">
+    <header className="toolbar-surface sticky top-4 z-30 mb-8 flex h-12 items-center justify-between rounded-2xl px-4">
+      <div className="flex items-center gap-2.5">
         <button
           onClick={onOpenMobileMenu}
-          className="p-2 rounded-xl bg-white/[0.04] border border-white/10 lg:hidden text-slate-300 hover:text-white"
-          aria-label="Open navigation menu"
+          className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-white/[0.06] hover:text-white lg:hidden"
+          aria-label="打开导航"
         >
-          <Menu className="w-5 h-5" />
+          <Menu className="h-5 w-5" />
         </button>
 
-        <div className="flex items-center gap-2 text-xs">
-          <span className="font-mono text-slate-500">workspace /</span>
-          <span className="font-semibold text-slate-200">
-            {SECTION_LABELS[activeSectionTitle] ?? activeSectionTitle}
-          </span>
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-500/10 text-blue-300 border border-blue-500/20">
-            Static
-          </span>
-        </div>
+        <span className="font-mono text-xs text-slate-600">/</span>
+        <span className="text-xs font-medium text-slate-300">
+          {SECTION_LABELS[activeSectionTitle] ?? activeSectionTitle}
+        </span>
       </div>
 
-      {/* Right: Actions, Search pill & Socials */}
-      <div className="flex items-center gap-3">
-        {/* Fast Search Trigger */}
+      <div className="flex items-center gap-1">
         <button
           onClick={onOpenSearch}
-          aria-haspopup="dialog"
-          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 text-slate-300 hover:text-white hover:border-white/25 transition-all text-xs backdrop-blur-sm"
+          aria-label="打开搜索"
+          className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/[0.06] hover:text-white lg:hidden"
         >
-          <Search className="w-3.5 h-3.5 text-blue-400" />
-          <span>Quick Find</span>
-          <ShortcutHint className="px-1.5 py-0.5 rounded bg-white/10 text-[10px] font-mono text-slate-300" />
+          <Search className="h-4 w-4" />
         </button>
 
-        <div className="h-4 w-px bg-white/10 hidden sm:block" />
+        <div className="mx-1 hidden h-4 w-px bg-white/[0.08] sm:block" />
 
-        {/* Social Icons with Glass Hover */}
-        <div className="flex items-center gap-1.5">
-          {profileData.links.github && (
-            <a
-              href={profileData.links.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08] transition-all"
-              title="GitHub"
-            >
-              <GithubIcon className="w-4 h-4" />
-            </a>
-          )}
-          {profileData.links.twitter && (
-            <a
-              href={profileData.links.twitter}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08] transition-all"
-              title="Twitter"
-            >
-              <TwitterIcon className="w-4 h-4" />
-            </a>
-          )}
+        {profileData.links.github && (
           <a
-            href={`mailto:${profileData.links.email}`}
-            className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08] transition-all"
-            title="Email"
+            href={profileData.links.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/[0.06] hover:text-white"
+            title="GitHub"
           >
-            <Mail className="w-4 h-4" />
+            <GithubIcon className="h-4 w-4" />
           </a>
-        </div>
+        )}
+
+        {profileData.links.twitter && (
+          <a
+            href={profileData.links.twitter}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/[0.06] hover:text-white"
+            title="Twitter"
+          >
+            <TwitterIcon className="h-4 w-4" />
+          </a>
+        )}
+
+        <a
+          href={`mailto:${profileData.links.email}`}
+          className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/[0.06] hover:text-white"
+          title="Email"
+        >
+          <Mail className="h-4 w-4" />
+        </a>
       </div>
     </header>
   );

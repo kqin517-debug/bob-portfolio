@@ -6,9 +6,8 @@ import { Cpu, Layers, Terminal } from "lucide-react";
 export function TechStackGrid() {
   const stackCategories = [
     {
-      title: "Framework & Language",
+      title: "框架与语言",
       icon: Layers,
-      accent: "#3865FF",
       skills: [
         { name: "Next.js 15", note: "App Router / 静态导出" },
         { name: "React 19", note: "Client Components / Hooks" },
@@ -17,9 +16,8 @@ export function TechStackGrid() {
       ],
     },
     {
-      title: "UI & Interaction",
+      title: "界面与交互",
       icon: Cpu,
-      accent: "#00E5FF",
       skills: [
         { name: "Glassmorphism CSS", note: "backdrop-filter / 内阴影高光" },
         { name: "Lucide React", note: "图标系统" },
@@ -28,9 +26,8 @@ export function TechStackGrid() {
       ],
     },
     {
-      title: "Delivery",
+      title: "构建与部署",
       icon: Terminal,
-      accent: "#21FF6B",
       skills: [
         { name: "GitHub Actions", note: "推送 main 自动构建" },
         { name: "GitHub Pages", note: "静态托管" },
@@ -41,61 +38,50 @@ export function TechStackGrid() {
   ];
 
   return (
-    <section id="tech-stack" className="space-y-5 scroll-mt-24">
-      {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+    <section id="tech-stack" className="scroll-mt-24 space-y-5">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-1">
-            <Cpu className="w-3.5 h-3.5" />
-            <span>BUILT WITH</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            本站技术栈 (Tech Stack)
+          <p className="mb-2 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">
+            <span className="h-px w-8 bg-accent/50" />
+            Colophon
+          </p>
+          <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+            本站如何构建
           </h2>
         </div>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-md">
-          这个页面实际使用的框架、样式与部署工具，均可在源码与 package.json 中核对。
+        <p className="max-w-sm text-xs leading-relaxed text-slate-400 sm:text-right">
+          页面实际使用的框架、样式与部署工具，均可在源码与 package.json 中核对。
         </p>
       </div>
 
-      {/* Grid of Categories */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {stackCategories.map((category) => {
-          const Icon = category.icon;
-          return (
-            <div
-              key={category.title}
-              className="p-6 rounded-3xl glass-panel glass-panel-hover border border-white/10"
-            >
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 pb-3 border-b border-white/[0.08]">
-                  <div
-                    className="p-2 rounded-xl bg-white/[0.04] border border-white/10"
-                    style={{ color: category.accent }}
-                  >
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <h3 className="font-bold text-white text-sm">
-                    {category.title}
-                  </h3>
+      <div className="glass-panel-subtle rounded-2xl p-6 sm:p-8">
+        <div className="grid gap-7 md:grid-cols-3 md:gap-0 md:divide-x md:divide-white/[0.06]">
+          {stackCategories.map((category) => {
+            const Icon = category.icon;
+            return (
+              <div
+                key={category.title}
+                className="md:px-7 md:first:pl-0 md:last:pr-0"
+              >
+                <div className="flex items-center gap-2 text-xs font-medium text-slate-200">
+                  <Icon className="h-4 w-4 text-slate-500" />
+                  <h3>{category.title}</h3>
                 </div>
 
-                <div className="space-y-3.5">
+                <ul className="mt-5 space-y-4">
                   {category.skills.map((skill) => (
-                    <div key={skill.name} className="space-y-1">
-                      <p className="text-xs font-medium text-slate-200">
-                        {skill.name}
-                      </p>
-                      <p className="text-[10px] text-slate-400 font-mono">
+                    <li key={skill.name} className="space-y-0.5">
+                      <p className="text-[13px] text-slate-200">{skill.name}</p>
+                      <p className="font-mono text-[11px] text-slate-400">
                         {skill.note}
                       </p>
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </section>
   );

@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Search, Code2, FolderGit2, X, ArrowRight } from "lucide-react";
 import { featuredSnippets } from "@/data/snippets";
 import { featuredProjects } from "@/data/projects";
+import { ShortcutHint } from "@/components/ui/ShortcutHint";
 
 interface SearchCommandModalProps {
   isOpen: boolean;
@@ -114,7 +115,7 @@ export function SearchCommandModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-20 sm:pt-28 px-4 bg-black/70 backdrop-blur-xl animate-fade-in"
+      className="animate-fade-in fixed inset-0 z-[60] flex items-start justify-center bg-black/75 px-4 pt-16 backdrop-blur-lg sm:pt-24"
       onClick={onClose}
     >
       <div
@@ -122,18 +123,17 @@ export function SearchCommandModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="search-dialog-title"
-        className="w-full max-w-2xl rounded-3xl glass-panel border border-white/20 shadow-2xl overflow-hidden"
+        className="flex max-h-[calc(100vh-8rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0a0c13]/95 shadow-2xl backdrop-blur-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 id="search-dialog-title" className="sr-only">
-          {hasProjects ? "Search snippets and projects" : "Search snippets"}
+          搜索代码片段
         </h2>
 
-        {/* Search Input Bar */}
-        <div className="flex items-center gap-3 px-5 py-4 border-b border-white/[0.08] bg-white/[0.04] backdrop-blur-md">
-          <Search className="w-5 h-5 text-blue-400" />
+        <div className="flex items-center gap-3 border-b border-white/[0.06] px-5 py-4 focus-within:bg-white/[0.02] focus-within:ring-1 focus-within:ring-inset focus-within:ring-accent/30">
+          <Search className="h-4 w-4 shrink-0 text-slate-500" />
           <label htmlFor="search-input" className="sr-only">
-            {hasProjects ? "Search snippets and projects" : "Search snippets"}
+            搜索代码片段
           </label>
           <input
             id="search-input"
@@ -143,26 +143,24 @@ export function SearchCommandModal({
             onChange={(e) => setQuery(e.target.value)}
             placeholder={
               hasProjects
-                ? "Search snippets, projects, tags..."
-                : "Search snippets and tags (e.g. 'debounce', 'async')..."
+                ? "搜索代码片段、项目或标签…"
+                : "搜索代码片段或标签，例如 debounce、async…"
             }
-            className="flex-1 bg-transparent border-none text-white placeholder-slate-400 text-sm focus:outline-none font-medium"
+            className="flex-1 border-none bg-transparent text-sm text-white placeholder:text-slate-500 focus:outline-none"
           />
           <button
             onClick={onClose}
-            aria-label="Close search"
-            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+            aria-label="关闭搜索"
+            className="rounded-lg p-1 text-slate-500 transition-colors hover:bg-white/[0.06] hover:text-white"
           >
-            <X className="w-4 h-4" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Results List */}
-        <div className="max-h-[60vh] overflow-y-auto p-4 space-y-4">
-          {/* Snippets Section */}
+        <div className="flex-1 space-y-4 overflow-y-auto p-4">
           <div className="space-y-1.5">
-            <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider px-2">
-              Code Snippets ({filteredSnippets.length})
+            <span className="px-2 font-mono text-[11px] tracking-wider text-slate-500">
+              代码片段（{filteredSnippets.length}）
             </span>
             {filteredSnippets.length > 0 ? (
               filteredSnippets.map((snippet) => (
@@ -173,36 +171,37 @@ export function SearchCommandModal({
                     onSelectSnippet(snippet.id);
                     onClose();
                   }}
-                  className="w-full flex items-center justify-between p-3 rounded-xl bg-white/[0.02] hover:bg-blue-600/20 border border-white/5 hover:border-blue-400/30 text-left transition-all group"
+                  className="group flex w-full items-center justify-between gap-4 rounded-xl border border-white/[0.04] bg-white/[0.02] p-3 text-left transition-colors hover:border-accent/20 hover:bg-accent-soft"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-blue-500/20 text-blue-400">
-                      <Code2 className="w-4 h-4" />
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="rounded-lg bg-white/[0.04] p-2 text-slate-400 transition-colors group-hover:text-accent">
+                      <Code2 className="h-4 w-4" />
                     </div>
-                    <div>
-                      <p className="text-sm font-semibold text-white group-hover:text-blue-300">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-slate-100">
                         {snippet.title}
                       </p>
-                      <p className="text-xs text-slate-400 line-clamp-1">
+                      <p className="truncate text-xs text-slate-400">
                         {snippet.description}
                       </p>
                     </div>
                   </div>
-                  <span className="text-xs font-mono text-slate-400 px-2 py-0.5 rounded bg-white/5">
+                  <span className="shrink-0 rounded bg-white/[0.04] px-2 py-0.5 font-mono text-[11px] text-slate-500">
                     {snippet.language}
                   </span>
                 </button>
               ))
             ) : (
-              <p className="text-xs text-slate-500 px-2 py-1">No matching snippets found.</p>
+              <p className="px-2 py-1 text-xs text-slate-500">
+                没有找到匹配的代码片段。
+              </p>
             )}
           </div>
 
-          {/* Projects Section */}
           {hasProjects && (
             <div className="space-y-1.5 pt-2">
-              <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider px-2">
-                Projects ({filteredProjects.length})
+              <span className="px-2 font-mono text-[11px] tracking-wider text-slate-500">
+                项目（{filteredProjects.length}）
               </span>
               {filteredProjects.length > 0 ? (
                 filteredProjects.map((project) => (
@@ -213,35 +212,39 @@ export function SearchCommandModal({
                       onSelectProject();
                       onClose();
                     }}
-                    className="w-full flex items-center justify-between p-3 rounded-xl bg-white/[0.02] hover:bg-purple-600/20 border border-white/5 hover:border-purple-400/30 text-left transition-all group"
+                    className="group flex w-full items-center justify-between gap-4 rounded-xl border border-white/[0.04] bg-white/[0.02] p-3 text-left transition-colors hover:border-accent/20 hover:bg-accent-soft"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-purple-500/20 text-purple-400">
-                        <FolderGit2 className="w-4 h-4" />
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className="rounded-lg bg-white/[0.04] p-2 text-slate-400 transition-colors group-hover:text-accent">
+                        <FolderGit2 className="h-4 w-4" />
                       </div>
-                      <div>
-                        <p className="text-sm font-semibold text-white group-hover:text-purple-300">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium text-slate-100">
                           {project.name}
                         </p>
-                        <p className="text-xs text-slate-400 line-clamp-1">
+                        <p className="truncate text-xs text-slate-400">
                           {project.tagline}
                         </p>
                       </div>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-white transition-colors" />
+                    <ArrowRight className="h-4 w-4 shrink-0 text-slate-600 transition-colors group-hover:text-slate-300" />
                   </button>
                 ))
               ) : (
-                <p className="text-xs text-slate-500 px-2 py-1">No matching projects found.</p>
+                <p className="px-2 py-1 text-xs text-slate-500">
+                  没有找到匹配的项目。
+                </p>
               )}
             </div>
           )}
         </div>
 
-        {/* Footer info */}
-        <div className="px-5 py-3 border-t border-white/[0.08] bg-black/50 flex items-center justify-between text-xs text-slate-400 font-mono">
-          <span>Tip: Press ESC to close</span>
-          <span>⚡ Instant In-Memory Filter</span>
+        <div className="flex items-center justify-between border-t border-white/[0.06] bg-white/[0.02] px-5 py-3 font-mono text-[11px] text-slate-500">
+          <span>ESC 关闭</span>
+          <span className="flex items-center gap-1.5">
+            打开
+            <ShortcutHint className="rounded border border-white/[0.06] bg-white/[0.03] px-1.5 py-0.5" />
+          </span>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@ export interface ProfileData {
   name: string;
   role?: string;
   shortRole?: string;
-  greeting: string;
+  tagline: string;
   bio?: string;
   avatar: string;
   status?: {
@@ -22,7 +22,7 @@ export const profileData: ProfileData = {
   name: "Bob",
   role: "Developer",
   shortRole: "Developer",
-  greeting: "Hello & Welcome",
+  tagline: "收集前端代码片段、工程实践与界面实验。",
   avatar: "/images/avatar.jpg",
   links: {
     email: "kqin517@gmail.com",

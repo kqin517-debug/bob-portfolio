@@ -7,19 +7,19 @@ import { featuredProjects } from "@/data/projects";
 
 export function FeaturedProjects() {
   return (
-    <section id="projects" className="space-y-5 scroll-mt-24">
+    <section id="projects" className="scroll-mt-24 space-y-6">
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-purple-400 mb-1">
-            <FolderGit2 className="w-3.5 h-3.5" />
-            <span>OPEN SOURCE &amp; WORK</span>
+          <div className="mb-2 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">
+            <span className="h-px w-8 bg-accent/50" />
+            Projects
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            代表开源项目 (Featured Projects)
+          <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+            代表项目
           </h2>
         </div>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-md">
+        <p className="max-w-sm text-xs leading-relaxed text-slate-400 sm:text-right">
           公开项目与技术作品，包含技术栈与源码入口。
         </p>
       </div>
@@ -61,19 +61,19 @@ export function FeaturedProjects() {
 
                 {/* Title & Tagline */}
                 <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-white group-hover:text-blue-300 transition-colors flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-white transition-colors group-hover:text-accent flex items-center justify-between">
                     <span>{project.name}</span>
                     {hasLinks && (
                       <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white transition-all transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     )}
                   </h3>
-                  <p className="text-xs font-medium text-blue-400/90">
+                  <p className="text-xs font-medium text-accent">
                     {project.tagline}
                   </p>
                 </div>
 
                 {/* Description */}
-                <p className="text-xs text-slate-300/80 leading-relaxed line-clamp-3">
+                <p className="text-xs text-slate-300 leading-relaxed line-clamp-3">
                   {project.description}
                 </p>
 
@@ -82,7 +82,7 @@ export function FeaturedProjects() {
                   {project.technologies.map((tech) => (
                     <span
                       key={tech}
-                      className="px-2 py-0.5 text-[10px] font-mono rounded-md bg-white/[0.03] text-slate-400 border border-white/[0.06]"
+                      className="px-2 py-0.5 text-[11px] font-mono rounded-md bg-white/[0.03] text-slate-300 border border-white/[0.06]"
                     >
                       {tech}
                     </span>
@@ -94,7 +94,7 @@ export function FeaturedProjects() {
               {hasBottomRow && (
                 <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs">
                   {project.metrics ? (
-                    <span className="font-mono text-slate-400 text-[11px]">
+                    <span className="font-mono text-slate-300 text-[11px]">
                       {project.metrics}
                     </span>
                   ) : (

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import {
   LayoutDashboard,
@@ -9,9 +9,7 @@ import {
   Cpu,
   Mail,
   Search,
-  Sparkles,
   ArrowUpRight,
-  ChevronRight,
   X,
 } from "lucide-react";
 import { profileData } from "@/data/profile";
@@ -19,6 +17,7 @@ import { featuredSnippets } from "@/data/snippets";
 import { featuredProjects } from "@/data/projects";
 import { assetPath } from "@/lib/utils";
 import { ShortcutHint } from "@/components/ui/ShortcutHint";
+import { GithubIcon } from "@/components/ui/Icons";
 import type { LucideIcon } from "lucide-react";
 
 interface SidebarProps {
@@ -33,14 +32,7 @@ interface NavItem {
   id: string;
   label: string;
   icon: LucideIcon;
-  badge?: string | null;
-  badgeColor?: string;
-  /** True when no route or on-page anchor exists yet (rendered as "coming soon"). */
-  disabled?: boolean;
-  /** Tooltip explaining why the item cannot be clicked / where it leads. */
-  title?: string;
-  isDropdown?: boolean;
-  subItems?: { id: string; name: string; color: string }[];
+  count?: number;
 }
 
 export function Sidebar({
@@ -50,14 +42,25 @@ export function Sidebar({
   isMobileOpen,
   setIsMobileOpen,
 }: SidebarProps) {
-  const [projectsExpanded, setProjectsExpanded] = useState(true);
+  useEffect(() => {
+    if (!isMobileOpen) return;
 
-  /**
-   * `onNavigateSection` is wired to `scrollToSection` in src/app/page.tsx and
-   * only scrolls. The active highlight itself is owned by the scroll-spy
-   * observer, so every target must be an id that really exists in the page.
-   * The mobile drawer is closed here so the scroll is visible on small screens.
-   */
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !event.isComposing) {
+        setIsMobileOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isMobileOpen, setIsMobileOpen]);
+
   const navigateToSection = (sectionId: string) => {
     onNavigateSection(sectionId);
     if (typeof window !== "undefined" && window.innerWidth < 1024) {
@@ -66,300 +69,151 @@ export function Sidebar({
   };
 
   const navItems: NavItem[] = [
-    {
-      id: "overview",
-      label: "Dashboard",
-      icon: LayoutDashboard,
-      badge: null,
-    },
+    { id: "overview", label: "概览", icon: LayoutDashboard },
     {
       id: "snippets",
-      label: "Snippets Hub",
+      label: "代码片段",
       icon: Code2,
-      // Derived from the real data source instead of a hardcoded "48".
-      badge: String(featuredSnippets.length),
-      badgeColor: "bg-gradient-to-b from-[#ff5126] to-[#dd1600]",
+      count: featuredSnippets.length,
     },
     ...(featuredProjects.length > 0
-      ? [
-          {
-            id: "projects",
-            label: "Projects",
-            icon: FolderGit2,
-            isDropdown: true,
-            subItems: featuredProjects.map((project) => ({
-              id: project.id,
-              name: project.name,
-              color: project.dotColor,
-            })),
-          },
-        ]
+      ? [{ id: "projects", label: "项目", icon: FolderGit2 }]
       : []),
-    {
-      id: "tech-stack",
-      label: "Tech Stack",
-      icon: Cpu,
-    },
+    { id: "tech-stack", label: "技术栈", icon: Cpu },
   ];
 
   return (
     <>
-      {/* Mobile Backdrop */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-md lg:hidden"
+          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-md lg:hidden"
           onClick={() => setIsMobileOpen(false)}
+          aria-hidden="true"
         />
       )}
 
-      {/* Main Glass Sidebar Container */}
       <aside
-        className={`fixed top-4 bottom-4 left-4 z-50 w-72 flex-col rounded-3xl glass-panel transition-all duration-300 ease-out flex ${
-          isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        aria-label="个人导航"
+        className={`glass-panel fixed bottom-4 left-4 top-4 z-50 flex w-72 flex-col rounded-3xl transition-transform duration-300 ease-out lg:translate-x-0 ${
+          isMobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* Figma _toolbar: Traffic lights & Mode switch */}
-        <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-white/[0.08]">
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 traffic-dot bg-[#FF5F56] shadow-[0_0_8px_rgba(255,95,86,0.6)] cursor-pointer" />
-            <span className="w-3 h-3 traffic-dot bg-[#FFBD2E] shadow-[0_0_8px_rgba(255,189,46,0.6)] cursor-pointer" />
-            <span className="w-3 h-3 traffic-dot bg-[#27C93F] shadow-[0_0_8px_rgba(39,201,63,0.6)] cursor-pointer" />
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Mobile close button */}
-            <button
-              onClick={() => setIsMobileOpen(false)}
-              aria-label="Close navigation menu"
-              className="lg:hidden p-1 text-slate-400 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Profile Card Header matching Figma _profile */}
-        <div className="px-5 py-4 border-b border-white/[0.08] bg-white/[0.02]">
-          <div className="flex items-center gap-3">
-            {/* Avatar with Figma-style multi-layer glow ring */}
-            <div className="relative group">
-              {/* 52px = inner w-12 (48px) + 2px padding on each side, so the
-                  gradient ring keeps its exact former 2px thickness. */}
-              <div className="w-[52px] h-[52px] rounded-full p-[2px] bg-gradient-to-tr from-blue-500/60 via-purple-500/40 to-white/40 shadow-glass-sm">
-                <div className="w-12 h-12 rounded-full overflow-hidden relative bg-slate-900 border border-white/20">
-                  <Image
-                    src={assetPath(profileData.avatar)}
-                    alt={profileData.name}
-                    width={48}
-                    height={48}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
+        <div className="flex items-center justify-between px-5 pb-4 pt-5">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="relative shrink-0">
+              <div className="h-12 w-12 overflow-hidden rounded-full border border-white/10">
+                <Image
+                  src={assetPath(profileData.avatar)}
+                  alt={profileData.name}
+                  width={48}
+                  height={48}
+                  className="h-full w-full object-cover"
+                />
               </div>
               {profileData.status && (
                 <span
-                  className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[#21FF6B] border-2 border-[#0e1322] shadow-glow-emerald animate-pulse"
+                  className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#0b0e16] bg-emerald-400"
                   title={profileData.status.label}
                 />
               )}
             </div>
-
-            <div className="flex-1 min-w-0">
-              <p className="text-[11px] font-medium tracking-wider text-blue-300/80 uppercase">
-                {profileData.greeting}
-              </p>
-              <h2 className="text-base font-bold text-white truncate tracking-tight">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-white">
                 {profileData.name}
-              </h2>
-              {profileData.shortRole && (
-                <p
-                  className="text-[11px] text-slate-400 truncate"
-                  title={profileData.role}
-                >
-                  {profileData.shortRole}
-                </p>
-              )}
+              </p>
+              <p className="truncate text-[11px] text-slate-400">
+                {profileData.shortRole}
+              </p>
             </div>
           </div>
-        </div>
 
-        {/* Quick Search Bar matching Figma _search */}
-        <div className="px-4 py-3">
           <button
-            onClick={onOpenSearch}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.09] border border-white/15 hover:border-white/25 text-slate-300 hover:text-white transition-all text-xs group backdrop-blur-sm"
+            onClick={() => setIsMobileOpen(false)}
+            aria-label="关闭导航"
+            className="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-white/[0.06] hover:text-white lg:hidden"
           >
-            <div className="flex items-center gap-2.5">
-              <Search className="w-4 h-4 text-slate-400 group-hover:text-blue-400 transition-colors" />
-              <span>Search code, tools...</span>
-            </div>
-            <ShortcutHint className="px-1.5 py-0.5 text-[10px] font-mono bg-white/10 border border-white/15 rounded text-slate-300" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Navigation Menu List matching Figma _cell */}
-        <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
+        <div className="px-4 pb-4">
+          <button
+            onClick={onOpenSearch}
+            className="flex w-full items-center justify-between rounded-xl border border-white/[0.07] bg-white/[0.03] px-3 py-2.5 text-xs text-slate-400 transition-colors hover:border-white/[0.12] hover:bg-white/[0.06] hover:text-slate-200"
+          >
+            <span className="flex items-center gap-2.5">
+              <Search className="h-4 w-4 text-slate-500" />
+              搜索代码片段
+            </span>
+            <ShortcutHint className="rounded border border-white/[0.08] bg-white/[0.04] px-1.5 py-0.5 font-mono text-[10px] text-slate-500" />
+          </button>
+        </div>
+
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.id;
-
-            if (item.disabled) {
-              return (
-                // The wrapper carries the tooltip because browsers do not
-                // reliably surface `title` (nor hover styles) on a natively
-                // disabled button.
-                <div
-                  key={item.id}
-                  title={item.title}
-                  className="cursor-not-allowed"
-                >
-                  <button
-                    type="button"
-                    disabled
-                    aria-disabled="true"
-                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500/80 opacity-60 select-none cursor-not-allowed"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Icon className="w-4 h-4 text-slate-500/80" />
-                      <span>{item.label}</span>
-                    </div>
-                    <span className="px-2 py-0.5 text-[10px] font-mono font-bold text-slate-400 bg-white/[0.06] border border-white/10 rounded-md">
-                      {item.badge || "Soon"}
-                    </span>
-                  </button>
-                </div>
-              );
-            }
-
-            if (item.isDropdown) {
-              return (
-                <div key={item.id} className="space-y-1">
-                  <button
-                    onClick={() => {
-                      navigateToSection(item.id);
-                      setProjectsExpanded(!projectsExpanded);
-                    }}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                      isActive
-                        ? "glass-menu-active text-white"
-                        : "text-slate-300 hover:text-white hover:bg-white/[0.04]"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Icon className="w-4 h-4 text-slate-400" />
-                      <span>{item.label}</span>
-                    </div>
-                    <ChevronRight
-                      className={`w-3.5 h-3.5 text-slate-400 transition-transform ${
-                        projectsExpanded ? "rotate-90" : ""
-                      }`}
-                    />
-                  </button>
-
-                  {/* Sub-projects list with colored dots from Figma */}
-                  {projectsExpanded && (
-                    <div className="pl-9 pr-2 space-y-1 py-1">
-                      {item.subItems?.map((sub) => (
-                        <button
-                          key={sub.id}
-                          type="button"
-                          title={`跳转到 Projects 区域：#projects（${sub.name}）`}
-                          onClick={() => navigateToSection("projects")}
-                          className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs text-slate-400 hover:text-white hover:bg-white/[0.04] transition-all group"
-                        >
-                          <div className="flex items-center gap-2">
-                            <span
-                              className="w-2 h-2 rounded-full shadow-sm"
-                              style={{ backgroundColor: sub.color }}
-                            />
-                            <span>{sub.name}</span>
-                          </div>
-                          <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-slate-400" />
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            }
 
             return (
               <button
                 key={item.id}
                 onClick={() => navigateToSection(item.id)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                aria-current={isActive ? "location" : undefined}
+                className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm transition-colors ${
                   isActive
-                    ? "glass-menu-active text-white font-semibold"
-                    : "text-slate-300 hover:text-white hover:bg-white/[0.04]"
+                    ? "glass-menu-active font-medium"
+                    : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-100"
                 }`}
               >
-                <div className="flex items-center gap-3">
+                <span className="flex items-center gap-3">
                   <Icon
-                    className={`w-4 h-4 ${
-                      isActive ? "text-blue-400" : "text-slate-400"
+                    className={`h-4 w-4 ${
+                      isActive ? "text-accent" : "text-slate-500"
                     }`}
                   />
-                  <span>{item.label}</span>
-                </div>
-
-                {item.badge && (
+                  {item.label}
+                </span>
+                {typeof item.count === "number" && (
                   <span
-                    className={`px-2 py-0.5 text-[10px] font-mono font-bold text-white rounded-md shadow-sm ${
-                      item.badgeColor || "bg-white/10 text-slate-300"
+                    className={`font-mono text-[11px] tabular-nums ${
+                      isActive ? "text-accent" : "text-slate-500"
                     }`}
                   >
-                    {item.badge}
+                    {String(item.count).padStart(2, "0")}
                   </span>
                 )}
               </button>
             );
           })}
-
-          <div className="pt-3 pb-1">
-            <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-          </div>
-
-          <a
-            href={`mailto:${profileData.links.email}`}
-            className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.04] transition-all"
-          >
-            <div className="flex items-center gap-3">
-              <Mail className="w-4 h-4 text-slate-400" />
-              <span>Contact Me</span>
-            </div>
-            <ArrowUpRight className="w-3.5 h-3.5 text-slate-500" />
-          </a>
         </nav>
 
-        {profileData.links.github && (
-          <div className="p-4 border-t border-white/[0.08]">
+        <div className="space-y-1 border-t border-white/[0.06] p-4">
+          <a
+            href={`mailto:${profileData.links.email}`}
+            className="flex items-center justify-between rounded-xl px-3 py-2 text-xs text-slate-400 transition-colors hover:bg-white/[0.04] hover:text-slate-100"
+          >
+            <span className="flex items-center gap-2.5">
+              <Mail className="h-4 w-4 text-slate-500" />
+              邮箱
+            </span>
+            <ArrowUpRight className="h-3.5 w-3.5 text-slate-600" />
+          </a>
+
+          {profileData.links.github && (
             <a
               href={profileData.links.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex items-center justify-between p-3 rounded-2xl overflow-hidden glass-cta-button transition-all duration-300 hover:scale-[1.02] hover:shadow-glow"
+              className="flex items-center justify-between rounded-xl px-3 py-2 text-xs text-slate-400 transition-colors hover:bg-white/[0.04] hover:text-slate-100"
             >
-              {/* Glow sweep effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-600/30 via-indigo-500/20 to-purple-600/30 opacity-80 group-hover:opacity-100 transition-opacity" />
-
-              <div className="relative z-10 flex items-center gap-2.5">
-                <div className="p-1.5 rounded-lg bg-blue-500/30 border border-blue-400/40 text-blue-200">
-                  <Sparkles className="w-4 h-4 text-blue-200 animate-spin-slow" />
-                </div>
-                <div className="text-left">
-                  <p className="text-xs font-bold text-white tracking-tight">
-                    GitHub Profile
-                  </p>
-                  <p className="text-[10px] text-blue-200/80">Connect &amp; Explore</p>
-                </div>
-              </div>
-
-              <div className="relative z-10 w-7 h-7 rounded-full bg-white/10 border border-white/25 flex items-center justify-center text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </div>
+              <span className="flex items-center gap-2.5">
+                <GithubIcon className="h-4 w-4 text-slate-500" />
+                GitHub
+              </span>
+              <ArrowUpRight className="h-3.5 w-3.5 text-slate-600" />
             </a>
-          </div>
-        )}
+          )}
+        </div>
       </aside>
     </>
   );

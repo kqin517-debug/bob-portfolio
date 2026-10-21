@@ -1,177 +1,63 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
-import {
-  Code2,
-  FolderGit2,
-  Copy,
-  Check,
-  ArrowRight,
-  Zap,
-} from "lucide-react";
+import React from "react";
+import { ArrowRight, Mail } from "lucide-react";
+import { GithubIcon } from "@/components/ui/Icons";
 import { profileData } from "@/data/profile";
-import { featuredSnippets } from "@/data/snippets";
-import { featuredProjects } from "@/data/projects";
 
 interface HeroCockpitProps {
   onNavigateSnippets: () => void;
-  onNavigateProjects: () => void;
 }
 
-export function HeroCockpit({
-  onNavigateSnippets,
-  onNavigateProjects,
-}: HeroCockpitProps) {
-  const [copied, setCopied] = useState(false);
-
-  const hasProjects = featuredProjects.length > 0;
-  const metrics = [
-    {
-      label: "Code Snippets",
-      value: String(featuredSnippets.length),
-      description: "本页收录的代码片段",
-    },
-    ...(hasProjects
-      ? [
-          {
-            label: "Featured Projects",
-            value: String(featuredProjects.length),
-            description: "本页展示的项目条目",
-          },
-        ]
-      : []),
-  ];
-
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText(profileData.links.email);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
+export function HeroCockpit({ onNavigateSnippets }: HeroCockpitProps) {
   return (
-    <section id="overview" className="relative space-y-6 scroll-mt-24">
-      {/* Hero Banner Glass Container */}
-      <div className="relative overflow-hidden rounded-3xl glass-panel p-6 sm:p-8 md:p-10 border border-white/15">
-        {/* Ambient Top Glow Orbs inside the card */}
-        <div className="absolute -top-24 left-1/4 w-96 h-96 bg-blue-500/15 rounded-full blur-[90px] pointer-events-none" />
-        <div className="absolute -bottom-24 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[90px] pointer-events-none" />
+    <section id="overview" className="scroll-mt-24">
+      <div className="max-w-3xl pb-2 pt-4 sm:pt-8">
+        <p className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">
+          <span className="h-px w-8 bg-accent/50" />
+          Code Notes
+        </p>
 
-        <div className="relative z-10 space-y-6 max-w-3xl">
-          {/* Status Badge */}
-          {profileData.status && (
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/[0.08] border border-white/20 backdrop-blur-md shadow-sm text-xs">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-              </span>
-              <span className="text-slate-200 font-medium">
-                {profileData.status.label}
-              </span>
-            </div>
-          )}
+        <h1 className="mt-5 text-balance text-[2rem] font-semibold leading-[1.15] tracking-tight text-white sm:text-4xl md:text-[2.75rem]">
+          {profileData.name} 的代码手记
+        </h1>
 
-          {/* Main Headline */}
-          <div className="space-y-3">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-[1.15]">
-              Code Snippets &amp;{" "}
-              <span className="bg-gradient-to-r from-blue-400 via-indigo-300 to-teal-300 bg-clip-text text-transparent">
-                Engineering Notes
-              </span>
-            </h1>
-            {profileData.bio && (
-              <p className="text-sm sm:text-base text-slate-300/90 leading-relaxed max-w-2xl">
-                {profileData.bio}
-              </p>
-            )}
-          </div>
+        <p className="mt-4 max-w-xl text-pretty text-sm leading-[1.8] text-slate-300 sm:text-[15px]">
+          {profileData.tagline}
+        </p>
 
-          {/* Current Focus Pills */}
-          {profileData.focus && profileData.focus.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2 pt-1">
-              <span className="text-xs font-mono text-slate-400 mr-1 flex items-center gap-1">
-                <Zap className="w-3.5 h-3.5 text-blue-400" /> Focus:
-              </span>
-              {profileData.focus.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/[0.04] border border-white/10 text-slate-300 hover:border-white/20 hover:text-white transition-colors cursor-default"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
+        <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <button
+            onClick={onNavigateSnippets}
+            className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-[#090b12] transition-colors hover:bg-accent-strong"
+          >
+            浏览代码片段
+            <ArrowRight className="h-4 w-4" />
+          </button>
 
-          {/* Action CTAs */}
-          <div className="flex flex-wrap items-center gap-3 pt-3">
-            <button
-              onClick={onNavigateSnippets}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 border border-white/25 shadow-glow hover:scale-[1.02] active:scale-[0.98] transition-all"
-            >
-              <Code2 className="w-4 h-4" />
-              <span>Explore Code Snippets</span>
-              <ArrowRight className="w-4 h-4 ml-0.5" />
-            </button>
-
-            {hasProjects && (
-              <button
-                onClick={onNavigateProjects}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-slate-200 bg-white/[0.05] hover:bg-white/[0.1] border border-white/15 hover:border-white/30 backdrop-blur-md transition-all active:scale-[0.98]"
+          <div className="flex items-center gap-5 text-xs text-slate-400">
+            {profileData.links.github && (
+              <a
+                href={profileData.links.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 transition-colors hover:text-slate-100"
               >
-                <FolderGit2 className="w-4 h-4 text-slate-400" />
-                <span>View Open Source</span>
-              </button>
+                <GithubIcon className="h-4 w-4" />
+                GitHub
+              </a>
             )}
 
-            <button
-              onClick={handleCopyEmail}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-slate-200 bg-white/[0.06] hover:bg-white/[0.14] border border-white/15 hover:border-white/30 backdrop-blur-md transition-all active:scale-[0.98]"
-              title="Copy developer email"
+            <a
+              href={`mailto:${profileData.links.email}`}
+              className="inline-flex items-center gap-1.5 transition-colors hover:text-slate-100"
             >
-              {copied ? (
-                <>
-                  <Check className="w-4 h-4 text-emerald-400" />
-                  <span className="text-emerald-400">Email Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-4 h-4 text-slate-400" />
-                  <span>Copy Contact</span>
-                </>
-              )}
-            </button>
+              <Mail className="h-4 w-4" />
+              <span className="hidden sm:inline">{profileData.links.email}</span>
+              <span className="sm:hidden">邮箱</span>
+            </a>
           </div>
         </div>
-      </div>
-
-      {/* Derived metrics only: no fabricated counts */}
-      <div
-        className={`grid grid-cols-1 gap-4 ${
-          metrics.length > 1 ? "sm:grid-cols-2" : ""
-        }`}
-      >
-        {metrics.map((metric) => (
-          <div
-            key={metric.label}
-            className="p-5 rounded-2xl glass-panel-subtle glass-panel-hover border border-white/10 flex flex-col justify-between"
-          >
-            <div className="mb-3">
-              <span className="text-xs font-medium text-slate-400">
-                {metric.label}
-              </span>
-            </div>
-
-            <div className="space-y-1">
-              <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-mono">
-                {metric.value}
-              </div>
-              <p className="text-xs text-slate-400 leading-snug">
-                {metric.description}
-              </p>
-            </div>
-          </div>
-        ))}
       </div>
     </section>
   );

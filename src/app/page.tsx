@@ -8,7 +8,7 @@ import { FeaturedSnippets } from "@/components/home/FeaturedSnippets";
 import { FeaturedProjects } from "@/components/home/FeaturedProjects";
 import { TechStackGrid } from "@/components/home/TechStackGrid";
 import { SearchCommandModal } from "@/components/home/SearchCommandModal";
-import { Code2, ArrowUp } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import { GithubIcon } from "@/components/ui/Icons";
 import { profileData } from "@/data/profile";
 import { featuredSnippets } from "@/data/snippets";
@@ -36,8 +36,24 @@ export default function HomePage() {
   const scrollToSection = useCallback((sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+      element.scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: "start",
+      });
     }
+  }, []);
+
+  const scrollToTop = useCallback(() => {
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    window.scrollTo({
+      top: 0,
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
   }, []);
 
   const openSearch = useCallback(() => {
@@ -77,16 +93,20 @@ export default function HomePage() {
 
         if (visible.size === 0) return;
 
-        const viewportHeight = window.innerHeight;
-        const mostVisible = Array.from(visible).reduce((a, b) => {
-          const aRect = a.getBoundingClientRect();
-          const bRect = b.getBoundingClientRect();
-          const aHeight =
-            Math.min(aRect.bottom, viewportHeight) - Math.max(aRect.top, 0);
-          const bHeight =
-            Math.min(bRect.bottom, viewportHeight) - Math.max(bRect.top, 0);
-          return aHeight >= bHeight ? a : b;
-        });
+        // Match the observer band (-80px top, -55% bottom) so a section
+        // peeking in from below cannot steal the highlight at page top.
+        const bandTop = 80;
+        const bandBottom = window.innerHeight * 0.45;
+        const overlap = (element: Element) => {
+          const rect = element.getBoundingClientRect();
+          return Math.max(
+            0,
+            Math.min(rect.bottom, bandBottom) - Math.max(rect.top, bandTop)
+          );
+        };
+        const mostVisible = Array.from(visible).reduce((a, b) =>
+          overlap(a) >= overlap(b) ? a : b
+        );
         setActiveSection(mostVisible.id);
       },
       {
@@ -118,8 +138,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex text-slate-100">
-      {/* Figma-Inspired Glass Sidebar */}
+    <div className="flex min-h-screen">
       <Sidebar
         activeSection={activeSection}
         onNavigateSection={scrollToSection}
@@ -128,84 +147,64 @@ export default function HomePage() {
         setIsMobileOpen={setIsMobileNavOpen}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 lg:pl-80 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full transition-all">
-        {/* Top Header Bar */}
+      <main className="mx-auto w-full max-w-7xl flex-1 p-4 transition-all sm:p-6 lg:p-8 lg:pl-80">
         <HeaderToolbar
           onOpenMobileMenu={() => setIsMobileNavOpen(true)}
           onOpenSearch={openSearch}
           activeSectionTitle={activeSection}
         />
 
-        {/* Dynamic Sections */}
-        <div className="space-y-12">
-          {/* Section 1: Hero Cockpit & Profile Overview */}
-          <HeroCockpit
-            onNavigateSnippets={() => scrollToSection("snippets")}
-            onNavigateProjects={() => scrollToSection("projects")}
-          />
+        <div className="space-y-16 sm:space-y-20">
+          <HeroCockpit onNavigateSnippets={() => scrollToSection("snippets")} />
 
-          {/* Section 2: Featured Code Snippets Showcase */}
           <FeaturedSnippets
             selectedSnippetId={selectedSnippetId}
             onSelectedSnippetChange={setSelectedSnippetId}
             selectionNonce={snippetSelectionNonce}
           />
 
-          {/* Section 3: Featured Open Source Projects */}
           {featuredProjects.length > 0 && <FeaturedProjects />}
 
-          {/* Section 4: Tech Stack Arsenal */}
           <TechStackGrid />
 
-          {/* Footer with Glass Pill Aesthetic */}
-          <footer className="mt-16 pt-8 pb-10 border-t border-white/[0.08] text-xs text-slate-400">
-            <div className="rounded-2xl glass-panel-subtle p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <span className="p-1 rounded-md bg-blue-500/20 text-blue-400">
-                  <Code2 className="w-4 h-4" />
-                </span>
-                <span className="font-semibold text-slate-200">
-                  {profileData.name} Code Portfolio
-                </span>
-                <span className="text-slate-600">/</span>
-                <span className="font-mono text-[11px] text-slate-400">
-                  Code &amp; Notes
-                </span>
-              </div>
+          <footer className="border-t border-white/[0.06] pb-10 pt-6">
+            <div className="flex flex-col gap-4 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+              <p>
+                © 2026 {profileData.name} · 用 Next.js 15 与 Tailwind CSS 构建
+              </p>
 
-              <div className="flex items-center gap-4 text-[11px]">
+              <div className="flex items-center gap-5">
                 {profileData.links.github && (
-                  <>
-                    <a
-                      href={profileData.links.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-white transition-colors flex items-center gap-1"
-                    >
-                      <GithubIcon className="w-3.5 h-3.5" />
-                      <span>GitHub</span>
-                    </a>
-                    <span className="text-slate-600">·</span>
-                  </>
+                  <a
+                    href={profileData.links.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 transition-colors hover:text-slate-200"
+                  >
+                    <GithubIcon className="h-3.5 w-3.5" />
+                    GitHub
+                  </a>
                 )}
-                <button
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                  className="hover:text-white transition-colors flex items-center gap-1"
+
+                <a
+                  href={`mailto:${profileData.links.email}`}
+                  className="transition-colors hover:text-slate-200"
                 >
-                  <ArrowUp className="w-3.5 h-3.5" />
-                  <span>Back to Top</span>
+                  邮箱
+                </a>
+
+                <button
+                  onClick={scrollToTop}
+                  className="inline-flex items-center gap-1.5 transition-colors hover:text-slate-200"
+                >
+                  <ArrowUp className="h-3.5 w-3.5" />
+                  回到顶部
                 </button>
               </div>
             </div>
-
-            <p className="text-center text-slate-500 text-[11px] mt-4 font-mono">
-              Built with Next.js 15, React 19 &amp; Tailwind CSS
-            </p>
           </footer>
         </div>
 
-        {/* Global Search Command Modal (Ctrl/⌘K) */}
         <SearchCommandModal
           isOpen={isSearchOpen}
           onClose={closeSearch}
