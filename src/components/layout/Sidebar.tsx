@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   LayoutDashboard,
@@ -9,6 +9,7 @@ import {
   Cpu,
   Mail,
   Search,
+  Settings,
   ArrowUpRight,
   X,
   Copy,
@@ -39,6 +40,8 @@ interface NavItem {
   count?: number;
 }
 
+type Theme = "dark" | "light";
+
 export function Sidebar({
   activeSection,
   onNavigateSection,
@@ -47,6 +50,28 @@ export function Sidebar({
   setIsMobileOpen,
 }: SidebarProps) {
   const { copied, copyEmail } = useCopyEmail(profileData.links.email);
+  const [theme, setTheme] = useState<Theme>("dark");
+
+  useEffect(() => {
+    setTheme(
+      document.documentElement.classList.contains("light") ? "light" : "dark"
+    );
+  }, []);
+
+  const applyTheme = (next: Theme) => {
+    const root = document.documentElement;
+
+    root.classList.toggle("light", next === "light");
+    root.classList.toggle("dark", next === "dark");
+
+    try {
+      window.localStorage.setItem("bob-theme", next);
+    } catch {
+      // 隐私模式下无法持久化时，本次会话内仍然可以切换。
+    }
+
+    setTheme(next);
+  };
 
   useEffect(() => {
     if (!isMobileOpen) return;
@@ -195,32 +220,73 @@ export function Sidebar({
             })}
           </nav>
 
+          <div className="mt-1 space-y-1">
+            <button
+              type="button"
+              onClick={copyEmail}
+              title={
+                copied
+                  ? "邮箱已复制"
+                  : `复制邮箱 ${profileData.links.email}`
+              }
+              aria-label={copied ? "邮箱已复制" : "复制邮箱地址"}
+              className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm text-slate-400 transition-colors hover:bg-white/[0.04] hover:text-slate-100"
+            >
+              <span className="flex items-center gap-3">
+                <Mail className="h-4 w-4 text-muted" />
+                {copied ? "邮箱已复制" : "邮箱"}
+              </span>
+              {copied ? (
+                <Check className="h-3.5 w-3.5 text-accent" />
+              ) : (
+                <Copy className="h-3.5 w-3.5 text-muted" />
+              )}
+            </button>
+
+            <div className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm text-slate-400">
+              <span className="flex items-center gap-3">
+                <Settings className="h-4 w-4 text-muted" />
+                设置
+              </span>
+              <span
+                className="flex items-center gap-0.5"
+                role="group"
+                aria-label="外观"
+              >
+                <button
+                  type="button"
+                  onClick={() => applyTheme("dark")}
+                  aria-pressed={theme === "dark"}
+                  title="深色模式"
+                  className={`rounded-md px-1.5 py-0.5 text-[11px] transition-colors ${
+                    theme === "dark"
+                      ? "bg-accent/15 font-medium text-accent"
+                      : "text-muted hover:bg-white/[0.04] hover:text-slate-200"
+                  }`}
+                >
+                  深色
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyTheme("light")}
+                  aria-pressed={theme === "light"}
+                  title="浅色模式"
+                  className={`rounded-md px-1.5 py-0.5 text-[11px] transition-colors ${
+                    theme === "light"
+                      ? "bg-accent/15 font-medium text-accent"
+                      : "text-muted hover:bg-white/[0.04] hover:text-slate-200"
+                  }`}
+                >
+                  浅色
+                </button>
+              </span>
+            </div>
+          </div>
+
           <AssignmentChecklist />
         </div>
 
         <div className="space-y-1 border-t border-white/[0.06] p-4">
-          <button
-            type="button"
-            onClick={copyEmail}
-            title={
-              copied
-                ? "邮箱已复制"
-                : `复制邮箱 ${profileData.links.email}`
-            }
-            aria-label={copied ? "邮箱已复制" : "复制邮箱地址"}
-            className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs text-slate-400 transition-colors hover:bg-white/[0.04] hover:text-slate-100"
-          >
-            <span className="flex items-center gap-2.5">
-              <Mail className="h-4 w-4 text-muted" />
-              {copied ? "邮箱已复制" : "邮箱"}
-            </span>
-            {copied ? (
-              <Check className="h-3.5 w-3.5 text-accent" />
-            ) : (
-              <Copy className="h-3.5 w-3.5 text-muted" />
-            )}
-          </button>
-
           {profileData.links.github && (
             <a
               href={profileData.links.github}
