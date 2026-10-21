@@ -42,8 +42,6 @@ export function AssignmentChecklist() {
     }
   }, [completedIds, hasLoadedStoredState]);
 
-  if (assignments.length === 0) return null;
-
   const toggleAssignment = (id: string) => {
     setCompletedIds((prev) =>
       prev.includes(id)
@@ -54,9 +52,12 @@ export function AssignmentChecklist() {
 
   const resetCompleted = () => setCompletedIds([]);
 
+  const hasAssignments = assignments.length > 0;
   const completedCount = completedIds.length;
-  const allDone = completedCount === assignments.length;
-  const progress = Math.round((completedCount / assignments.length) * 100);
+  const allDone = hasAssignments && completedCount === assignments.length;
+  const progress = hasAssignments
+    ? Math.round((completedCount / assignments.length) * 100)
+    : 0;
 
   return (
     <section
@@ -94,84 +95,90 @@ export function AssignmentChecklist() {
       <div
         id="assignments-panel"
         hidden={!isExpanded}
-        className="mt-2 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-1.5"
+        className={`mt-2 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-1.5 ${
+          hasAssignments ? "" : "min-h-[44px]"
+        }`}
       >
-        <div className="px-1.5 pb-2 pt-1">
-          <div
-            className="h-1 overflow-hidden rounded-full bg-white/[0.06]"
-            aria-hidden="true"
-          >
-            <div
-              className="h-full rounded-full bg-accent transition-[width] duration-300 ease-out"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
+        {hasAssignments && (
+          <>
+            <div className="px-1.5 pb-2 pt-1">
+              <div
+                className="h-1 overflow-hidden rounded-full bg-white/[0.06]"
+                aria-hidden="true"
+              >
+                <div
+                  className="h-full rounded-full bg-accent transition-[width] duration-300 ease-out"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
 
-        <ul className="space-y-0.5">
-          {assignments.map((assignment) => {
-            const isDone = completedIds.includes(assignment.id);
+            <ul className="space-y-0.5">
+              {assignments.map((assignment) => {
+                const isDone = completedIds.includes(assignment.id);
 
-            return (
-              <li key={assignment.id}>
+                return (
+                  <li key={assignment.id}>
+                    <button
+                      type="button"
+                      role="checkbox"
+                      aria-checked={isDone}
+                      onClick={() => toggleAssignment(assignment.id)}
+                      className="group flex w-full items-start gap-2.5 rounded-xl px-2 py-1.5 text-left transition-colors hover:bg-white/[0.04]"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-[5px] border transition-colors ${
+                          isDone
+                            ? "border-accent bg-accent text-[#090b12]"
+                            : "border-white/20 text-transparent group-hover:border-white/40"
+                        }`}
+                      >
+                        <Check className="h-3 w-3" strokeWidth={3} />
+                      </span>
+
+                      <span className="min-w-0 flex-1">
+                        <span
+                          className={`block text-pretty text-sm leading-[1.6] transition-colors ${
+                            isDone ? "text-muted line-through" : "text-slate-200"
+                          }`}
+                        >
+                          {assignment.title}
+                        </span>
+                        <span className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] leading-[1.5] text-muted">
+                          <span>{assignment.tag}</span>
+                          {assignment.dueAt && (
+                            <>
+                              <span
+                                className="h-0.5 w-0.5 rounded-full bg-white/25"
+                                aria-hidden="true"
+                              />
+                              <span className="tabular-nums">
+                                截止 {assignment.dueAt}
+                              </span>
+                            </>
+                          )}
+                        </span>
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+
+            {completedCount > 0 && (
+              <div className="mt-1 border-t border-white/[0.05] px-1 pt-1.5">
                 <button
                   type="button"
-                  role="checkbox"
-                  aria-checked={isDone}
-                  onClick={() => toggleAssignment(assignment.id)}
-                  className="group flex w-full items-start gap-2.5 rounded-xl px-2 py-1.5 text-left transition-colors hover:bg-white/[0.04]"
+                  onClick={resetCompleted}
+                  className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1 text-[11px] text-muted transition-colors hover:bg-white/[0.04] hover:text-slate-200"
                 >
-                  <span
-                    aria-hidden="true"
-                    className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-[5px] border transition-colors ${
-                      isDone
-                        ? "border-accent bg-accent text-[#090b12]"
-                        : "border-white/20 text-transparent group-hover:border-white/40"
-                    }`}
-                  >
-                    <Check className="h-3 w-3" strokeWidth={3} />
-                  </span>
-
-                  <span className="min-w-0 flex-1">
-                    <span
-                      className={`block text-pretty text-sm leading-[1.6] transition-colors ${
-                        isDone ? "text-muted line-through" : "text-slate-200"
-                      }`}
-                    >
-                      {assignment.title}
-                    </span>
-                    <span className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] leading-[1.5] text-muted">
-                      <span>{assignment.tag}</span>
-                      {assignment.dueAt && (
-                        <>
-                          <span
-                            className="h-0.5 w-0.5 rounded-full bg-white/25"
-                            aria-hidden="true"
-                          />
-                          <span className="tabular-nums">
-                            截止 {assignment.dueAt}
-                          </span>
-                        </>
-                      )}
-                    </span>
-                  </span>
+                  <RotateCcw className="h-3 w-3" />
+                  重置完成状态
                 </button>
-              </li>
-            );
-          })}
-        </ul>
-
-        {completedCount > 0 && (
-          <div className="mt-1 border-t border-white/[0.05] px-1 pt-1.5">
-            <button
-              type="button"
-              onClick={resetCompleted}
-              className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1 text-[11px] text-muted transition-colors hover:bg-white/[0.04] hover:text-slate-200"
-            >
-              <RotateCcw className="h-3 w-3" />
-              重置完成状态
-            </button>
-          </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>

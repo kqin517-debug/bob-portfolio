@@ -42,23 +42,23 @@ export function AmbientBackground() {
           alt=""
           fill
           sizes="100vw"
-          className="object-cover object-center opacity-[0.28] blur-[1.5px] brightness-75 saturate-[0.55]"
+          className="ambient-image object-cover object-center"
         />
       </div>
-      <div className="absolute inset-0 bg-[#05060b]/60" />
+      <div className="ambient-tint absolute inset-0" />
 
       {/* Two static ambient light wells */}
-      <div className="absolute -top-[20%] left-[12%] h-[700px] w-[700px] rounded-full bg-[#4a5a9e]/20 blur-[140px]" />
-      <div className="absolute -bottom-[15%] right-[4%] h-[600px] w-[600px] rounded-full bg-[#6e7ff3]/12 blur-[140px]" />
+      <div className="ambient-glow ambient-glow-a absolute -top-[20%] left-[12%] h-[700px] w-[700px] rounded-full" />
+      <div className="ambient-glow ambient-glow-b absolute -bottom-[15%] right-[4%] h-[600px] w-[600px] rounded-full" />
 
       {/* Fine grid */}
-      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.05)_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.18] mix-blend-overlay" />
+      <div className="ambient-grid absolute inset-0" />
 
       {/* Cursor refraction, fine pointers only */}
       <div ref={spotlightRef} className="absolute inset-0" />
 
       {/* Edge vignette keeps the frame quiet */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_35%,transparent_35%,rgba(3,4,8,0.6)_85%,rgba(3,4,8,0.85)_100%)]" />
+      <div className="ambient-vignette absolute inset-0" />
     </div>
   );
 }

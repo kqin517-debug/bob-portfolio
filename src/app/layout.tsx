@@ -16,14 +16,23 @@ export const metadata: Metadata = {
   ],
 };
 
+const themeInitScript = `(function(){try{var t=localStorage.getItem("bob-theme");if(t==="light"){var r=document.documentElement;r.classList.remove("dark");r.classList.add("light");}}catch(e){}})();`;
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="zh-CN" className="dark scroll-smooth">
-      <body className="min-h-screen bg-ink text-[#e7eaf2] antialiased selection:bg-accent/30 selection:text-white">
+    <html
+      lang="zh-CN"
+      className="dark scroll-smooth"
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body className="min-h-screen antialiased selection:bg-accent/30 selection:text-white">
         <AmbientBackground />
 
         <div className="relative z-10">{children}</div>

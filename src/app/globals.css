@@ -192,3 +192,484 @@ button:focus-visible,
     transition-duration: 0.01ms !important;
   }
 }
+
+/* =========================================================================
+   AMBIENT BACKGROUND
+   ========================================================================= */
+
+.ambient-image {
+  opacity: 0.28;
+  filter: blur(1.5px) brightness(0.75) saturate(0.55);
+}
+
+.ambient-tint {
+  background-color: rgba(5, 6, 11, 0.6);
+}
+
+.ambient-glow {
+  filter: blur(140px);
+}
+
+.ambient-glow-a {
+  background-color: rgba(74, 90, 158, 0.2);
+}
+
+.ambient-glow-b {
+  background-color: rgba(110, 127, 243, 0.12);
+}
+
+.ambient-grid {
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.05) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+}
+
+.ambient-vignette {
+  background-image: radial-gradient(
+    ellipse at 50% 35%,
+    transparent 35%,
+    rgba(3, 4, 8, 0.6) 85%,
+    rgba(3, 4, 8, 0.85) 100%
+  );
+}
+
+/* =========================================================================
+   LIGHT THEME
+   Dark stays the default. html.light is set by the theme toggle and the
+   inline script in the root layout. Code windows remain ink-dark on purpose.
+   ========================================================================= */
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.light {
+  color-scheme: light;
+  --background: #f2f5fa;
+  --foreground: #131926;
+}
+
+html.light body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Surfaces */
+html.light .glass-panel {
+  background-color: rgba(255, 255, 255, 0.76);
+  background-image: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0) 45%
+  );
+  border-color: rgba(15, 23, 42, 0.08);
+  box-shadow:
+    0 24px 60px -32px rgba(30, 41, 59, 0.28),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+html.light .glass-panel-subtle {
+  background-color: rgba(255, 255, 255, 0.66);
+  border-color: rgba(15, 23, 42, 0.08);
+  box-shadow:
+    0 12px 32px -24px rgba(30, 41, 59, 0.22),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+}
+
+html.light .toolbar-surface {
+  background-color: rgba(255, 255, 255, 0.86);
+  border-color: rgba(15, 23, 42, 0.07);
+  box-shadow:
+    0 12px 32px -26px rgba(30, 41, 59, 0.25),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+html.light .glass-panel-hover:hover {
+  border-color: rgba(15, 23, 42, 0.16);
+  background-color: rgba(255, 255, 255, 0.88);
+}
+
+html.light .glass-menu-active {
+  color: #0f172a;
+  background-image: linear-gradient(
+    90deg,
+    rgba(143, 168, 255, 0.28) 0%,
+    rgba(143, 168, 255, 0.08) 100%
+  );
+}
+
+html.light .glass-menu-active:hover {
+  background-color: rgba(143, 168, 255, 0.1);
+}
+
+html.light .bg-\[\#0a0c13\]\/95 {
+  background-color: rgba(250, 251, 253, 0.97);
+}
+
+html.light .border-\[\#0b0e16\] {
+  border-color: rgba(255, 255, 255, 0.92);
+}
+
+/* Text */
+html.light .text-white {
+  color: #0f172a;
+}
+
+html.light .text-slate-100 {
+  color: #1e293b;
+}
+
+html.light .text-slate-200 {
+  color: #334155;
+}
+
+html.light .text-slate-300 {
+  color: #465268;
+}
+
+html.light .text-slate-400 {
+  color: #5f6b80;
+}
+
+html.light .text-slate-500 {
+  color: #768299;
+}
+
+html.light .text-slate-600 {
+  color: #9aa4b5;
+}
+
+html.light .text-muted {
+  color: #6b768a;
+}
+
+html.light .text-accent {
+  color: #4f6ce8;
+}
+
+html.light .hover\:text-white:hover {
+  color: #0f172a;
+}
+
+html.light .hover\:text-slate-100:hover {
+  color: #0f172a;
+}
+
+html.light .hover\:text-slate-200:hover {
+  color: #1e293b;
+}
+
+html.light .group:hover .group-hover\:text-white {
+  color: #0f172a;
+}
+
+html.light .group:hover .group-hover\:text-slate-300 {
+  color: #334155;
+}
+
+html.light .group:hover .group-hover\:text-slate-400 {
+  color: #4b586d;
+}
+
+html.light .group:hover .group-hover\:text-accent {
+  color: #4f6ce8;
+}
+
+html.light .placeholder\:text-muted::placeholder {
+  color: #8b96a9;
+}
+
+html.light .placeholder\:text-slate-500::placeholder {
+  color: #94a3b8;
+}
+
+html.light .selection\:text-white::selection {
+  color: #0f172a;
+}
+
+/* Borders */
+html.light .border-white\/\[0\.04\] {
+  border-color: rgba(15, 23, 42, 0.06);
+}
+
+html.light .border-white\/\[0\.05\] {
+  border-color: rgba(15, 23, 42, 0.07);
+}
+
+html.light .border-white\/\[0\.06\] {
+  border-color: rgba(15, 23, 42, 0.09);
+}
+
+html.light .border-white\/\[0\.07\] {
+  border-color: rgba(15, 23, 42, 0.1);
+}
+
+html.light .border-white\/\[0\.08\] {
+  border-color: rgba(15, 23, 42, 0.11);
+}
+
+html.light .border-white\/10 {
+  border-color: rgba(15, 23, 42, 0.12);
+}
+
+html.light .border-white\/20 {
+  border-color: rgba(15, 23, 42, 0.18);
+}
+
+html.light .hover\:border-white\/\[0\.12\]:hover {
+  border-color: rgba(15, 23, 42, 0.18);
+}
+
+html.light .group:hover .group-hover\:border-white\/40 {
+  border-color: rgba(15, 23, 42, 0.34);
+}
+
+@media (min-width: 768px) {
+  html.light .md\:divide-white\/\[0\.06\] > :not([hidden]) ~ :not([hidden]) {
+    border-color: rgba(15, 23, 42, 0.09);
+  }
+}
+
+/* Backgrounds */
+html.light .bg-white\/\[0\.02\] {
+  background-color: rgba(15, 23, 42, 0.03);
+}
+
+html.light .bg-white\/\[0\.03\] {
+  background-color: rgba(15, 23, 42, 0.04);
+}
+
+html.light .bg-white\/\[0\.04\] {
+  background-color: rgba(15, 23, 42, 0.05);
+}
+
+html.light .bg-white\/\[0\.05\] {
+  background-color: rgba(15, 23, 42, 0.06);
+}
+
+html.light .bg-white\/\[0\.06\] {
+  background-color: rgba(15, 23, 42, 0.07);
+}
+
+html.light .bg-white\/\[0\.08\] {
+  background-color: rgba(15, 23, 42, 0.09);
+}
+
+html.light .bg-white\/25 {
+  background-color: rgba(15, 23, 42, 0.25);
+}
+
+html.light .hover\:bg-white\/\[0\.03\]:hover {
+  background-color: rgba(15, 23, 42, 0.055);
+}
+
+html.light .hover\:bg-white\/\[0\.04\]:hover {
+  background-color: rgba(15, 23, 42, 0.06);
+}
+
+html.light .hover\:bg-white\/\[0\.06\]:hover {
+  background-color: rgba(15, 23, 42, 0.085);
+}
+
+html.light .hover\:bg-white\/\[0\.12\]:hover {
+  background-color: rgba(15, 23, 42, 0.14);
+}
+
+html.light .focus\:bg-white\/\[0\.05\]:focus {
+  background-color: rgba(15, 23, 42, 0.06);
+}
+
+html.light .focus-within\:bg-white\/\[0\.02\]:focus-within {
+  background-color: rgba(15, 23, 42, 0.03);
+}
+
+/* Status tints */
+html.light .text-emerald-200 {
+  color: #047857;
+}
+
+html.light .text-emerald-300 {
+  color: #047857;
+}
+
+html.light .text-rose-200 {
+  color: #be123c;
+}
+
+html.light .text-amber-300 {
+  color: #b45309;
+}
+
+html.light .text-amber-300\/90 {
+  color: rgba(180, 83, 9, 0.9);
+}
+
+html.light .fill-amber-300 {
+  fill: #d97706;
+}
+
+html.light .bg-emerald-400\/\[0\.06\] {
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+html.light .border-emerald-400\/20 {
+  border-color: rgba(16, 185, 129, 0.28);
+}
+
+html.light .bg-rose-400\/\[0\.06\] {
+  background-color: rgba(244, 63, 94, 0.1);
+}
+
+html.light .border-rose-400\/20 {
+  border-color: rgba(244, 63, 94, 0.28);
+}
+
+html.light .bg-amber-500\/10 {
+  background-color: rgba(245, 158, 11, 0.12);
+}
+
+html.light .border-amber-500\/20 {
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+/* Ambient background */
+html.light .ambient-image {
+  opacity: 0.1;
+  filter: blur(1.5px) brightness(1.15) saturate(0.35);
+}
+
+html.light .ambient-tint {
+  background-color: rgba(242, 245, 250, 0.72);
+}
+
+html.light .ambient-glow-a {
+  background-color: rgba(143, 168, 255, 0.22);
+}
+
+html.light .ambient-glow-b {
+  background-color: rgba(196, 181, 253, 0.18);
+}
+
+html.light .ambient-grid {
+  background-image: radial-gradient(
+    rgba(15, 23, 42, 0.07) 1px,
+    transparent 1px
+  );
+  opacity: 0.35;
+  mix-blend-mode: normal;
+}
+
+html.light .ambient-vignette {
+  background-image: radial-gradient(
+    ellipse at 50% 35%,
+    transparent 35%,
+    rgba(242, 245, 250, 0.55) 85%,
+    rgba(242, 245, 250, 0.85) 100%
+  );
+}
+
+/* Scrollbar */
+html.light ::-webkit-scrollbar-track {
+  background: rgba(242, 245, 250, 0.9);
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: rgba(79, 108, 232, 0.28);
+}
+
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(79, 108, 232, 0.45);
+}
+
+/* Code windows stay dark in both themes */
+html.light .code-surface .text-white {
+  color: #ffffff;
+}
+
+html.light .code-surface .text-slate-100 {
+  color: #f1f5f9;
+}
+
+html.light .code-surface .text-slate-200 {
+  color: #e2e8f0;
+}
+
+html.light .code-surface .text-slate-300 {
+  color: #cbd5e1;
+}
+
+html.light .code-surface .text-slate-400 {
+  color: #94a3b8;
+}
+
+html.light .code-surface .text-muted {
+  color: #7b8499;
+}
+
+html.light .code-surface .text-accent {
+  color: #8fa8ff;
+}
+
+html.light .code-surface .text-emerald-300 {
+  color: #6ee7b7;
+}
+
+html.light .code-surface .text-amber-300 {
+  color: #fcd34d;
+}
+
+html.light .code-surface .hover\:text-slate-100:hover {
+  color: #f1f5f9;
+}
+
+html.light .code-surface .hover\:text-slate-200:hover {
+  color: #e2e8f0;
+}
+
+html.light .code-surface .group:hover .group-hover\:text-slate-400 {
+  color: #94a3b8;
+}
+
+html.light .code-surface .bg-white\/\[0\.02\] {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+html.light .code-surface .bg-white\/\[0\.03\] {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+html.light .code-surface .bg-white\/\[0\.05\] {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+html.light .code-surface .bg-white\/\[0\.06\] {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+html.light .code-surface .bg-white\/\[0\.08\] {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+html.light .code-surface .hover\:bg-white\/\[0\.03\]:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+html.light .code-surface .hover\:bg-white\/\[0\.06\]:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+html.light .code-surface .border-white\/\[0\.06\] {
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+html.light .code-surface .border-white\/\[0\.07\] {
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+html.light .code-surface .border-white\/\[0\.08\] {
+  border-color: rgba(255, 255, 255, 0.08);
+}
