@@ -11,3 +11,16 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 export function assetPath(path: string) {
   return `${BASE_PATH}${path}`;
 }
+
+export function isExternalUrl(url: string) {
+  return /^([a-z][a-z0-9+.-]*:)?\/\//i.test(url);
+}
+
+/**
+ * 数据文件里同时支持本地路径和外部链接。外部链接原样返回，
+ * 本地路径补上前缀后再交给 assetPath()，避免子路径部署下附件 404。
+ */
+export function resolveContentUrl(url: string) {
+  if (isExternalUrl(url)) return url;
+  return assetPath(url.startsWith("/") ? url : `/${url}`);
+}

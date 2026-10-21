@@ -7,7 +7,9 @@ import { useCopyEmail } from "@/lib/useCopyEmail";
 
 const SECTION_LABELS: Record<string, string> = {
   overview: "概览",
-  projects: "项目",
+  papers: "论文",
+  projects: "代码项目",
+  coursework: "课程作业",
   contact: "联系",
 };
 

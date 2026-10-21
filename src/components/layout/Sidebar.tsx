@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   LayoutDashboard,
+  FileText,
   FolderGit2,
+  GraduationCap,
   Mail,
   Settings,
   ArrowUpRight,
@@ -16,9 +18,12 @@ import {
 import { profileData } from "@/data/profile";
 import { useCopyEmail } from "@/lib/useCopyEmail";
 import { featuredProjects } from "@/data/projects";
+import { papers } from "@/data/papers";
+import { courses } from "@/data/coursework";
+import { getLatestUpdates } from "@/lib/content";
 import { assetPath } from "@/lib/utils";
 import { GithubIcon } from "@/components/ui/Icons";
-import { AssignmentChecklist } from "@/components/layout/AssignmentChecklist";
+import { LatestUpdates } from "@/components/layout/LatestUpdates";
 
 interface SidebarProps {
   activeSection: string;
@@ -93,8 +98,14 @@ export function Sidebar({
 
   const navItems: NavItem[] = [
     { id: "overview", label: "概览", icon: LayoutDashboard },
+    ...(papers.length > 0
+      ? [{ id: "papers", label: "论文", icon: FileText }]
+      : []),
     ...(featuredProjects.length > 0
-      ? [{ id: "projects", label: "项目", icon: FolderGit2 }]
+      ? [{ id: "projects", label: "代码项目", icon: FolderGit2 }]
+      : []),
+    ...(courses.length > 0
+      ? [{ id: "coursework", label: "课程作业", icon: GraduationCap }]
       : []),
     { id: "contact", label: "联系", icon: Mail },
   ];
@@ -183,6 +194,11 @@ export function Sidebar({
             })}
           </nav>
 
+          <LatestUpdates
+            items={getLatestUpdates(papers, courses, 3)}
+            onNavigate={navigateToSection}
+          />
+
           <div className="mt-1 space-y-1">
             <button
               type="button"
@@ -245,8 +261,6 @@ export function Sidebar({
               </span>
             </div>
           </div>
-
-          <AssignmentChecklist />
         </div>
 
         <div className="space-y-1 border-t border-white/[0.06] p-4">

@@ -3,6 +3,7 @@
 import { ExternalLink, Star, ArrowUpRight } from "lucide-react";
 import { GithubIcon } from "@/components/ui/Icons";
 import { featuredProjects } from "@/data/projects";
+import { profileData } from "@/data/profile";
 
 export function FeaturedProjects() {
   return (
@@ -12,15 +13,28 @@ export function FeaturedProjects() {
         <div>
           <div className="mb-2 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
             <span className="h-px w-8 bg-accent/50" />
-            Projects
+            Code
           </div>
           <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-            代表项目
+            代码项目
           </h2>
         </div>
-        <p className="max-w-sm text-xs leading-relaxed text-slate-400 sm:text-right">
-          公开项目与技术作品，包含技术栈与源码入口。
-        </p>
+        <div className="flex flex-col gap-2 sm:items-end">
+          <p className="max-w-sm text-xs leading-relaxed text-slate-400 sm:text-right">
+            课程项目、实验代码与公开作品，包含技术栈与源码入口。
+          </p>
+          {profileData.links.github && (
+            <a
+              href={profileData.links.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs text-accent transition-colors hover:text-white"
+            >
+              更多代码
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </a>
+          )}
+        </div>
       </div>
 
       {/* Projects Grid */}

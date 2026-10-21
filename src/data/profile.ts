@@ -17,7 +17,7 @@ export interface ProfileData {
 export const profileData: ProfileData = {
   name: "Bob",
   shortRole: "Developer",
-  tagline: "记录工程实践与界面实验。",
+  tagline: "分享论文、代码与课程作业。",
   avatar: "/images/avatar.png",
   links: {
     email: "kqin517@gmail.com",

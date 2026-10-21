@@ -4,17 +4,23 @@ import { useCallback, useEffect, useState } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { HeaderToolbar } from "@/components/layout/HeaderToolbar";
 import { HeroCockpit } from "@/components/home/HeroCockpit";
+import { PapersSection } from "@/components/home/PapersSection";
 import { FeaturedProjects } from "@/components/home/FeaturedProjects";
+import { CourseworkSection } from "@/components/home/CourseworkSection";
 import { ContactSection } from "@/components/home/ContactSection";
 import { ArrowUp } from "lucide-react";
 import { GithubIcon } from "@/components/ui/Icons";
 import { profileData } from "@/data/profile";
 import { featuredProjects } from "@/data/projects";
+import { papers } from "@/data/papers";
+import { courses } from "@/data/coursework";
 import { useCopyEmail } from "@/lib/useCopyEmail";
 
 const SECTION_IDS = [
   "overview",
+  ...(papers.length > 0 ? ["papers"] : []),
   ...(featuredProjects.length > 0 ? ["projects"] : []),
+  ...(courses.length > 0 ? ["coursework"] : []),
   "contact",
 ];
 
@@ -108,7 +114,11 @@ export default function HomePage() {
         <div className="space-y-16 sm:space-y-20">
           <HeroCockpit />
 
+          {papers.length > 0 && <PapersSection />}
+
           {featuredProjects.length > 0 && <FeaturedProjects />}
+
+          {courses.length > 0 && <CourseworkSection />}
 
           <ContactSection />
 

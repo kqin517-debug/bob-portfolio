@@ -13,11 +13,11 @@ export function HeroCockpit() {
       <div className="max-w-3xl pb-2 pt-4 sm:pt-8">
         <p className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
           <span className="h-px w-8 bg-accent/50" />
-          Code Notes
+          Notes & Papers
         </p>
 
         <h1 className="mt-5 text-balance text-[2rem] font-semibold leading-[1.15] tracking-tight text-white sm:text-4xl md:text-[2.75rem]">
-          {profileData.name} 的代码手记
+          {profileData.name} 的学习手记
         </h1>
 
         <p className="mt-4 max-w-xl text-pretty text-sm leading-[1.8] text-slate-300 sm:text-[15px]">

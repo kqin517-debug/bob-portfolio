@@ -157,6 +157,10 @@ import { assetPath } from "@/lib/utils";
 <Image src={assetPath("/images/your-image.png")} ... />
 ```
 
+论文 PDF、作业附件等内容链接统一使用 `resolveContentUrl()`：
+本地路径会自动补上 basePath，外部链接（DOI、arXiv、GitHub）保持原样。
+数据文件里只写 `/files/...` 或完整的 `https://...`，不要手动拼接部署前缀。
+
 ### 2.4 联系表单（FormSubmit）
 
 首页「联系」区块是纯静态表单，提交后由 [FormSubmit](https://formsubmit.co/) 把内容转发到
@@ -179,15 +183,39 @@ import { assetPath } from "@/lib/utils";
 
 ## 3. 日常维护
 
+### 3.1 论文
+
+1. 把 PDF 放进 `public/files/papers/`，文件名使用 ASCII slug（不要空格）。
+2. 在 `src/data/papers.ts` 的 `papers` 数组中增加一条记录。
+3. `pdfUrl` / `slidesUrl` 支持本地路径和外部链接；`codeUrl` 填完整的 GitHub 地址。
+4. `date` 使用 `YYYY-MM-DD`，侧栏“最新更新”会按它倒序取前 4 条。
+
+### 3.2 课程作业
+
+1. 把附件放进 `public/files/coursework/<course-id>/`。
+2. 在 `src/data/coursework.ts` 对应课程的 `items` 中添加记录。
+3. `courses` 的数组顺序就是页面展示顺序，最新学期放最前。
+4. 作业类型支持 `homework` / `lab` / `project` / `notes`。
+
+### 3.3 项目与个人信息
+
 新增项目：编辑 `src/data/projects.ts`。其中 `stars`、`metrics`、`demoUrl`、`githubUrl`
 均为可选字段，留空时对应 UI（星标、指标、外链入口）会自动隐藏。
 修改个人信息与社交链接：编辑 `src/data/profile.ts`（`links` 提供邮箱、GitHub，Twitter 可选）。
+
+### 3.4 没有本地环境时
+
+可以直接在 GitHub 网页版上传附件、编辑数据文件并提交，推送后由 Actions 自动重新部署。
+
+**公开提醒**：`public/` 下的文件都可被直接访问并留在 git 历史中。不要上传出版社 PDF、
+未授权的课程课件、含个人信息或未评分作业答案的文件。
 
 ---
 
 ## 4. 已知限制（待后续阶段处理）
 
 - **路由尚未拆分**：目前只有 `/` 一条路由，`/projects`、`/about` 尚未实现。
+- **论文与作业没有独立详情页**：内容都在单页卡片内展示；单篇论文可用 `#paper-<id>` 锚点分享。
 
 ---
 
@@ -198,7 +226,10 @@ import { assetPath } from "@/lib/utils";
 | `src/data/profile.ts` | 姓名、邮箱、GitHub 为真实信息；Twitter 未配置，对应图标自动隐藏 |
 | `src/data/contact.ts` | FormSubmit 转发端点与反馈邮件主题 |
 | 首页联系区 | 访客填写邮箱与反馈，经 FormSubmit 转发到 Gmail；首次上线需激活 |
-| `src/data/projects.ts` | 当前为空数组，项目区块与侧栏入口自动隐藏；新增项目后自动出现 |
+| `src/data/projects.ts` | 当前为空数组，代码项目区块与侧栏入口自动隐藏；新增项目后自动出现 |
+| `src/data/papers.ts` | 当前为空数组，论文区块与侧栏入口自动隐藏；新增论文后自动出现 |
+| `src/data/coursework.ts` | 当前为空数组，课程作业区块与侧栏入口自动隐藏；新增作业后自动出现 |
 | `public/images/` | `avatar.png`（头像）、`bg-wave.jpg`（背景） |
+| `public/files/` | 论文 PDF 与课程作业附件目录，目前只有 `.gitkeep` 占位 |
 
-侧边栏的项目入口由本地数据派生，不展示虚构数字。
+侧边栏的论文、代码项目、课程作业入口与“最新更新”均由本地数据派生，不展示虚构内容。
