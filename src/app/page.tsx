@@ -13,6 +13,7 @@ import { GithubIcon } from "@/components/ui/Icons";
 import { profileData } from "@/data/profile";
 import { featuredSnippets } from "@/data/snippets";
 import { featuredProjects } from "@/data/projects";
+import { useCopyEmail } from "@/lib/useCopyEmail";
 
 const SECTION_IDS = [
   "overview",
@@ -22,6 +23,7 @@ const SECTION_IDS = [
 ];
 
 export default function HomePage() {
+  const { copied, copyEmail } = useCopyEmail(profileData.links.email);
   const [activeSection, setActiveSection] = useState<string>("overview");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -186,12 +188,18 @@ export default function HomePage() {
                   </a>
                 )}
 
-                <a
-                  href={`mailto:${profileData.links.email}`}
+                <button
+                  type="button"
+                  onClick={copyEmail}
+                  title={
+                    copied
+                      ? "邮箱已复制"
+                      : `复制邮箱 ${profileData.links.email}`
+                  }
                   className="transition-colors hover:text-slate-200"
                 >
-                  邮箱
-                </a>
+                  {copied ? "邮箱已复制" : "邮箱"}
+                </button>
 
                 <button
                   onClick={scrollToTop}

@@ -1,15 +1,18 @@
 "use client";
 
 import React from "react";
-import { ArrowRight, Mail } from "lucide-react";
+import { ArrowRight, Mail, Check } from "lucide-react";
 import { GithubIcon } from "@/components/ui/Icons";
 import { profileData } from "@/data/profile";
+import { useCopyEmail } from "@/lib/useCopyEmail";
 
 interface HeroCockpitProps {
   onNavigateSnippets: () => void;
 }
 
 export function HeroCockpit({ onNavigateSnippets }: HeroCockpitProps) {
+  const { copied, copyEmail } = useCopyEmail(profileData.links.email);
+
   return (
     <section id="overview" className="scroll-mt-24">
       <div className="max-w-3xl pb-2 pt-4 sm:pt-8">
@@ -48,14 +51,26 @@ export function HeroCockpit({ onNavigateSnippets }: HeroCockpitProps) {
               </a>
             )}
 
-            <a
-              href={`mailto:${profileData.links.email}`}
+            <button
+              type="button"
+              onClick={copyEmail}
+              title={
+                copied
+                  ? "邮箱已复制"
+                  : `复制邮箱 ${profileData.links.email}`
+              }
               className="inline-flex items-center gap-1.5 transition-colors hover:text-slate-100"
             >
-              <Mail className="h-4 w-4" />
-              <span className="hidden sm:inline">{profileData.links.email}</span>
-              <span className="sm:hidden">邮箱</span>
-            </a>
+              {copied ? (
+                <Check className="h-4 w-4 text-accent" />
+              ) : (
+                <Mail className="h-4 w-4" />
+              )}
+              <span className="hidden sm:inline">
+                {copied ? "邮箱已复制" : profileData.links.email}
+              </span>
+              <span className="sm:hidden">{copied ? "已复制" : "邮箱"}</span>
+            </button>
           </div>
         </div>
       </div>

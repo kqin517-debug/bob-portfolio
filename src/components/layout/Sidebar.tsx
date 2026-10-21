@@ -11,13 +11,17 @@ import {
   Search,
   ArrowUpRight,
   X,
+  Copy,
+  Check,
 } from "lucide-react";
 import { profileData } from "@/data/profile";
+import { useCopyEmail } from "@/lib/useCopyEmail";
 import { featuredSnippets } from "@/data/snippets";
 import { featuredProjects } from "@/data/projects";
 import { assetPath } from "@/lib/utils";
 import { ShortcutHint } from "@/components/ui/ShortcutHint";
 import { GithubIcon } from "@/components/ui/Icons";
+import { AssignmentChecklist } from "@/components/layout/AssignmentChecklist";
 import type { LucideIcon } from "lucide-react";
 
 interface SidebarProps {
@@ -42,6 +46,8 @@ export function Sidebar({
   isMobileOpen,
   setIsMobileOpen,
 }: SidebarProps) {
+  const { copied, copyEmail } = useCopyEmail(profileData.links.email);
+
   useEffect(() => {
     if (!isMobileOpen) return;
 
@@ -93,7 +99,7 @@ export function Sidebar({
       )}
 
       <aside
-        aria-label="个人导航"
+        aria-label="侧边栏"
         className={`glass-panel fixed bottom-4 left-4 top-4 z-50 flex w-72 flex-col rounded-3xl transition-transform duration-300 ease-out lg:translate-x-0 ${
           isMobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
@@ -149,55 +155,70 @@ export function Sidebar({
           </button>
         </div>
 
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeSection === item.id;
+        <div className="flex-1 overflow-y-auto px-3 py-1">
+          <nav aria-label="页面导航" className="space-y-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeSection === item.id;
 
-            return (
-              <button
-                key={item.id}
-                onClick={() => navigateToSection(item.id)}
-                aria-current={isActive ? "location" : undefined}
-                className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm transition-colors ${
-                  isActive
-                    ? "glass-menu-active font-medium"
-                    : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-100"
-                }`}
-              >
-                <span className="flex items-center gap-3">
-                  <Icon
-                    className={`h-4 w-4 ${
-                      isActive ? "text-accent" : "text-muted"
-                    }`}
-                  />
-                  {item.label}
-                </span>
-                {typeof item.count === "number" && (
-                  <span
-                    className={`font-mono text-[11px] tabular-nums ${
-                      isActive ? "text-accent" : "text-muted"
-                    }`}
-                  >
-                    {String(item.count).padStart(2, "0")}
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => navigateToSection(item.id)}
+                  aria-current={isActive ? "location" : undefined}
+                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm transition-colors ${
+                    isActive
+                      ? "glass-menu-active font-medium"
+                      : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-100"
+                  }`}
+                >
+                  <span className="flex items-center gap-3">
+                    <Icon
+                      className={`h-4 w-4 ${
+                        isActive ? "text-accent" : "text-muted"
+                      }`}
+                    />
+                    {item.label}
                   </span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
+                  {typeof item.count === "number" && (
+                    <span
+                      className={`font-mono text-[11px] tabular-nums ${
+                        isActive ? "text-accent" : "text-muted"
+                      }`}
+                    >
+                      {String(item.count).padStart(2, "0")}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+
+          <AssignmentChecklist />
+        </div>
 
         <div className="space-y-1 border-t border-white/[0.06] p-4">
-          <a
-            href={`mailto:${profileData.links.email}`}
-            className="flex items-center justify-between rounded-xl px-3 py-2 text-xs text-slate-400 transition-colors hover:bg-white/[0.04] hover:text-slate-100"
+          <button
+            type="button"
+            onClick={copyEmail}
+            title={
+              copied
+                ? "邮箱已复制"
+                : `复制邮箱 ${profileData.links.email}`
+            }
+            aria-label={copied ? "邮箱已复制" : "复制邮箱地址"}
+            className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs text-slate-400 transition-colors hover:bg-white/[0.04] hover:text-slate-100"
           >
             <span className="flex items-center gap-2.5">
               <Mail className="h-4 w-4 text-muted" />
-              邮箱
+              {copied ? "邮箱已复制" : "邮箱"}
             </span>
-            <ArrowUpRight className="h-3.5 w-3.5 text-muted" />
-          </a>
+            {copied ? (
+              <Check className="h-3.5 w-3.5 text-accent" />
+            ) : (
+              <Copy className="h-3.5 w-3.5 text-muted" />
+            )}
+          </button>
 
           {profileData.links.github && (
             <a

@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
-import { Menu, Search, Mail } from "lucide-react";
+import { Menu, Search, Mail, Check } from "lucide-react";
 import { GithubIcon, TwitterIcon } from "@/components/ui/Icons";
 import { profileData } from "@/data/profile";
+import { useCopyEmail } from "@/lib/useCopyEmail";
 
 const SECTION_LABELS: Record<string, string> = {
   overview: "概览",
@@ -23,6 +24,8 @@ export function HeaderToolbar({
   onOpenSearch,
   activeSectionTitle,
 }: HeaderToolbarProps) {
+  const { copied, copyEmail } = useCopyEmail(profileData.links.email);
+
   return (
     <header className="toolbar-surface sticky top-4 z-30 mb-8 flex h-12 items-center justify-between rounded-2xl px-4">
       <div className="flex items-center gap-2.5">
@@ -75,13 +78,19 @@ export function HeaderToolbar({
           </a>
         )}
 
-        <a
-          href={`mailto:${profileData.links.email}`}
+        <button
+          type="button"
+          onClick={copyEmail}
           className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/[0.06] hover:text-white"
-          title="Email"
+          title={copied ? "邮箱已复制" : "复制邮箱地址"}
+          aria-label={copied ? "邮箱已复制" : "复制邮箱地址"}
         >
-          <Mail className="h-4 w-4" />
-        </a>
+          {copied ? (
+            <Check className="h-4 w-4 text-accent" />
+          ) : (
+            <Mail className="h-4 w-4" />
+          )}
+        </button>
       </div>
     </header>
   );
