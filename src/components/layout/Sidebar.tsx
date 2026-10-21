@@ -7,8 +7,6 @@ import {
   Code2,
   FolderGit2,
   Cpu,
-  BarChart3,
-  Settings,
   Mail,
   Search,
   Sparkles,
@@ -18,6 +16,7 @@ import {
 } from "lucide-react";
 import { profileData } from "@/data/profile";
 import { featuredSnippets } from "@/data/snippets";
+import { featuredProjects } from "@/data/projects";
 import { assetPath } from "@/lib/utils";
 import { ShortcutHint } from "@/components/ui/ShortcutHint";
 import type { LucideIcon } from "lucide-react";
@@ -81,31 +80,25 @@ export function Sidebar({
       badge: String(featuredSnippets.length),
       badgeColor: "bg-gradient-to-b from-[#ff5126] to-[#dd1600]",
     },
-    {
-      id: "projects",
-      label: "Projects",
-      icon: FolderGit2,
-      isDropdown: true,
-      subItems: [
-        { id: "crystal-ui", name: "Crystal UI", color: "#21FF6B" },
-        { id: "syntax-forge", name: "SyntaxForge", color: "#FF4C24" },
-        { id: "hyper-cache", name: "HyperCache", color: "#3865FF" },
-      ],
-    },
+    ...(featuredProjects.length > 0
+      ? [
+          {
+            id: "projects",
+            label: "Projects",
+            icon: FolderGit2,
+            isDropdown: true,
+            subItems: featuredProjects.map((project) => ({
+              id: project.id,
+              name: project.name,
+              color: project.dotColor,
+            })),
+          },
+        ]
+      : []),
     {
       id: "tech-stack",
-      label: "Tech Arsenal",
+      label: "Tech Stack",
       icon: Cpu,
-    },
-    {
-      id: "analytics",
-      label: "Analytics",
-      icon: BarChart3,
-      // No /analytics route and no #analytics anchor exists in this build.
-      // The fabricated "99.9%" metric was replaced by an honest "Soon" tag.
-      badge: "Soon",
-      disabled: true,
-      title: "Analytics 页面即将推出，当前版本尚无可跳转目标",
     },
   ];
 
@@ -163,11 +156,12 @@ export function Sidebar({
                   />
                 </div>
               </div>
-              {/* Green status indicator from Figma */}
-              <span
-                className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[#21FF6B] border-2 border-[#0e1322] shadow-glow-emerald animate-pulse"
-                title={profileData.status.label}
-              />
+              {profileData.status && (
+                <span
+                  className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[#21FF6B] border-2 border-[#0e1322] shadow-glow-emerald animate-pulse"
+                  title={profileData.status.label}
+                />
+              )}
             </div>
 
             <div className="flex-1 min-w-0">
@@ -177,12 +171,14 @@ export function Sidebar({
               <h2 className="text-base font-bold text-white truncate tracking-tight">
                 {profileData.name}
               </h2>
-              <p
-                className="text-[11px] text-slate-400 truncate"
-                title={profileData.role}
-              >
-                {profileData.shortRole}
-              </p>
+              {profileData.shortRole && (
+                <p
+                  className="text-[11px] text-slate-400 truncate"
+                  title={profileData.role}
+                >
+                  {profileData.shortRole}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -323,27 +319,6 @@ export function Sidebar({
             <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           </div>
 
-          {/* Settings has no route/anchor yet: disabled "coming soon" instead of a fake jump. */}
-          <div
-            title="Settings 页面即将推出，当前版本尚无可跳转目标"
-            className="cursor-not-allowed"
-          >
-            <button
-              type="button"
-              disabled
-              aria-disabled="true"
-              className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500/80 opacity-60 select-none cursor-not-allowed"
-            >
-              <div className="flex items-center gap-3">
-                <Settings className="w-4 h-4 text-slate-500/80" />
-                <span>Settings</span>
-              </div>
-              <span className="px-2 py-0.5 text-[10px] font-mono font-bold text-slate-400 bg-white/[0.06] border border-white/10 rounded-md">
-                Soon
-              </span>
-            </button>
-          </div>
-
           <a
             href={`mailto:${profileData.links.email}`}
             className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-white/[0.04] transition-all"
@@ -356,34 +331,35 @@ export function Sidebar({
           </a>
         </nav>
 
-        {/* Bottom CTA Banner matching Figma _button-full-access */}
-        <div className="p-4 border-t border-white/[0.08]">
-          <a
-            href={profileData.links.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative flex items-center justify-between p-3 rounded-2xl overflow-hidden glass-cta-button transition-all duration-300 hover:scale-[1.02] hover:shadow-glow"
-          >
-            {/* Glow sweep effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/30 via-indigo-500/20 to-purple-600/30 opacity-80 group-hover:opacity-100 transition-opacity" />
+        {profileData.links.github && (
+          <div className="p-4 border-t border-white/[0.08]">
+            <a
+              href={profileData.links.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative flex items-center justify-between p-3 rounded-2xl overflow-hidden glass-cta-button transition-all duration-300 hover:scale-[1.02] hover:shadow-glow"
+            >
+              {/* Glow sweep effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600/30 via-indigo-500/20 to-purple-600/30 opacity-80 group-hover:opacity-100 transition-opacity" />
 
-            <div className="relative z-10 flex items-center gap-2.5">
-              <div className="p-1.5 rounded-lg bg-blue-500/30 border border-blue-400/40 text-blue-200">
-                <Sparkles className="w-4 h-4 text-blue-200 animate-spin-slow" />
+              <div className="relative z-10 flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg bg-blue-500/30 border border-blue-400/40 text-blue-200">
+                  <Sparkles className="w-4 h-4 text-blue-200 animate-spin-slow" />
+                </div>
+                <div className="text-left">
+                  <p className="text-xs font-bold text-white tracking-tight">
+                    GitHub Profile
+                  </p>
+                  <p className="text-[10px] text-blue-200/80">Connect &amp; Explore</p>
+                </div>
               </div>
-              <div className="text-left">
-                <p className="text-xs font-bold text-white tracking-tight">
-                  GitHub Profile
-                </p>
-                <p className="text-[10px] text-blue-200/80">Connect &amp; Explore</p>
-              </div>
-            </div>
 
-            <div className="relative z-10 w-7 h-7 rounded-full bg-white/10 border border-white/25 flex items-center justify-center text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </div>
-          </a>
-        </div>
+              <div className="relative z-10 w-7 h-7 rounded-full bg-white/10 border border-white/25 flex items-center justify-center text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </div>
+            </a>
+          </div>
+        )}
       </aside>
     </>
   );

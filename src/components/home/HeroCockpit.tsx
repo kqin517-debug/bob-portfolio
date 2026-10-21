@@ -25,17 +25,22 @@ export function HeroCockpit({
 }: HeroCockpitProps) {
   const [copied, setCopied] = useState(false);
 
+  const hasProjects = featuredProjects.length > 0;
   const metrics = [
     {
       label: "Code Snippets",
       value: String(featuredSnippets.length),
       description: "本页收录的代码片段",
     },
-    {
-      label: "Featured Projects",
-      value: String(featuredProjects.length),
-      description: "本页展示的项目条目",
-    },
+    ...(hasProjects
+      ? [
+          {
+            label: "Featured Projects",
+            value: String(featuredProjects.length),
+            description: "本页展示的项目条目",
+          },
+        ]
+      : []),
   ];
 
   const handleCopyEmail = () => {
@@ -54,44 +59,49 @@ export function HeroCockpit({
 
         <div className="relative z-10 space-y-6 max-w-3xl">
           {/* Status Badge */}
-          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/[0.08] border border-white/20 backdrop-blur-md shadow-sm text-xs">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-            </span>
-            <span className="text-slate-200 font-medium">
-              {profileData.status.label}
-            </span>
-          </div>
+          {profileData.status && (
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/[0.08] border border-white/20 backdrop-blur-md shadow-sm text-xs">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+              </span>
+              <span className="text-slate-200 font-medium">
+                {profileData.status.label}
+              </span>
+            </div>
+          )}
 
           {/* Main Headline */}
           <div className="space-y-3">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-[1.15]">
-              Crafting High-Performance Architecture &amp;{" "}
+              Code Snippets &amp;{" "}
               <span className="bg-gradient-to-r from-blue-400 via-indigo-300 to-teal-300 bg-clip-text text-transparent">
-                Glassmorphic
-              </span>{" "}
-              Web Interfaces
+                Engineering Notes
+              </span>
             </h1>
-            <p className="text-sm sm:text-base text-slate-300/90 leading-relaxed max-w-2xl">
-              {profileData.bio}
-            </p>
+            {profileData.bio && (
+              <p className="text-sm sm:text-base text-slate-300/90 leading-relaxed max-w-2xl">
+                {profileData.bio}
+              </p>
+            )}
           </div>
 
           {/* Current Focus Pills */}
-          <div className="flex flex-wrap items-center gap-2 pt-1">
-            <span className="text-xs font-mono text-slate-400 mr-1 flex items-center gap-1">
-              <Zap className="w-3.5 h-3.5 text-blue-400" /> Focus:
-            </span>
-            {profileData.focus.map((tag) => (
-              <span
-                key={tag}
-                className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/[0.04] border border-white/10 text-slate-300 hover:border-white/20 hover:text-white transition-colors cursor-default"
-              >
-                {tag}
+          {profileData.focus && profileData.focus.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <span className="text-xs font-mono text-slate-400 mr-1 flex items-center gap-1">
+                <Zap className="w-3.5 h-3.5 text-blue-400" /> Focus:
               </span>
-            ))}
-          </div>
+              {profileData.focus.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/[0.04] border border-white/10 text-slate-300 hover:border-white/20 hover:text-white transition-colors cursor-default"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
 
           {/* Action CTAs */}
           <div className="flex flex-wrap items-center gap-3 pt-3">
@@ -104,13 +114,15 @@ export function HeroCockpit({
               <ArrowRight className="w-4 h-4 ml-0.5" />
             </button>
 
-            <button
-              onClick={onNavigateProjects}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-slate-200 bg-white/[0.05] hover:bg-white/[0.1] border border-white/15 hover:border-white/30 backdrop-blur-md transition-all active:scale-[0.98]"
-            >
-              <FolderGit2 className="w-4 h-4 text-slate-400" />
-              <span>View Open Source</span>
-            </button>
+            {hasProjects && (
+              <button
+                onClick={onNavigateProjects}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-slate-200 bg-white/[0.05] hover:bg-white/[0.1] border border-white/15 hover:border-white/30 backdrop-blur-md transition-all active:scale-[0.98]"
+              >
+                <FolderGit2 className="w-4 h-4 text-slate-400" />
+                <span>View Open Source</span>
+              </button>
+            )}
 
             <button
               onClick={handleCopyEmail}
@@ -134,7 +146,11 @@ export function HeroCockpit({
       </div>
 
       {/* Derived metrics only: no fabricated counts */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div
+        className={`grid grid-cols-1 gap-4 ${
+          metrics.length > 1 ? "sm:grid-cols-2" : ""
+        }`}
+      >
         {metrics.map((metric) => (
           <div
             key={metric.label}

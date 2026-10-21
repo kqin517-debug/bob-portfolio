@@ -55,7 +55,7 @@ export function FeaturedSnippets({
           </h2>
         </div>
         <p className="text-xs sm:text-sm text-slate-400 max-w-md">
-          精选最具工程复用价值与性能代表性的生产级代码实现，支持一键复制代码与查看设计哲学。
+          本页收录的代码实现，支持一键复制与查看实现说明。
         </p>
       </div>
 
@@ -104,14 +104,14 @@ export function FeaturedSnippets({
             <div className="h-4 w-px bg-white/10 mx-1 hidden sm:block" />
 
             {/* File Path Tab */}
-            <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-xs font-mono text-slate-300">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-lg bg-white/[0.04] border border-white/10 text-xs font-mono text-slate-300">
               <FileCode className="w-3.5 h-3.5 text-blue-400" />
               <span>{currentSnippet.id}.{currentSnippet.language === "css" ? "css" : "ts"}</span>
             </div>
           </div>
 
           {/* Right Controls: Tab toggle & Copy Button */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <div className="flex rounded-lg bg-white/[0.04] p-0.5 border border-white/10 text-xs">
               <button
                 onClick={() => setActiveTab("code")}
@@ -219,7 +219,7 @@ export function FeaturedSnippets({
 
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-1">
                 <span className="text-xs text-slate-400 flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-emerald-400" /> 最近验证时间
+                  <Clock className="w-3.5 h-3.5 text-emerald-400" /> 最近更新
                 </span>
                 <p className="text-sm font-mono font-bold text-white">
                   {currentSnippet.updatedAt}

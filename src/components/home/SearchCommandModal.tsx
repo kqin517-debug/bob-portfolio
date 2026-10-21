@@ -96,6 +96,7 @@ export function SearchCommandModal({
 
   if (!isOpen) return null;
 
+  const hasProjects = featuredProjects.length > 0;
   const normalizedQuery = query.toLowerCase();
   const filteredSnippets = featuredSnippets.filter(
     (s) =>
@@ -125,14 +126,14 @@ export function SearchCommandModal({
         onClick={(e) => e.stopPropagation()}
       >
         <h2 id="search-dialog-title" className="sr-only">
-          Search snippets and projects
+          {hasProjects ? "Search snippets and projects" : "Search snippets"}
         </h2>
 
         {/* Search Input Bar */}
         <div className="flex items-center gap-3 px-5 py-4 border-b border-white/[0.08] bg-white/[0.04] backdrop-blur-md">
           <Search className="w-5 h-5 text-blue-400" />
           <label htmlFor="search-input" className="sr-only">
-            Search snippets and projects
+            {hasProjects ? "Search snippets and projects" : "Search snippets"}
           </label>
           <input
             id="search-input"
@@ -140,7 +141,11 @@ export function SearchCommandModal({
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search snippets, projects, tags (e.g. 'debounce', 'glass', 'rust')..."
+            placeholder={
+              hasProjects
+                ? "Search snippets, projects, tags..."
+                : "Search snippets and tags (e.g. 'debounce', 'async')..."
+            }
             className="flex-1 bg-transparent border-none text-white placeholder-slate-400 text-sm focus:outline-none font-medium"
           />
           <button
@@ -194,41 +199,43 @@ export function SearchCommandModal({
           </div>
 
           {/* Projects Section */}
-          <div className="space-y-1.5 pt-2">
-            <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider px-2">
-              Projects ({filteredProjects.length})
-            </span>
-            {filteredProjects.length > 0 ? (
-              filteredProjects.map((project) => (
-                <button
-                  key={project.id}
-                  type="button"
-                  onClick={() => {
-                    onSelectProject();
-                    onClose();
-                  }}
-                  className="w-full flex items-center justify-between p-3 rounded-xl bg-white/[0.02] hover:bg-purple-600/20 border border-white/5 hover:border-purple-400/30 text-left transition-all group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-purple-500/20 text-purple-400">
-                      <FolderGit2 className="w-4 h-4" />
+          {hasProjects && (
+            <div className="space-y-1.5 pt-2">
+              <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider px-2">
+                Projects ({filteredProjects.length})
+              </span>
+              {filteredProjects.length > 0 ? (
+                filteredProjects.map((project) => (
+                  <button
+                    key={project.id}
+                    type="button"
+                    onClick={() => {
+                      onSelectProject();
+                      onClose();
+                    }}
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-white/[0.02] hover:bg-purple-600/20 border border-white/5 hover:border-purple-400/30 text-left transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-purple-500/20 text-purple-400">
+                        <FolderGit2 className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-white group-hover:text-purple-300">
+                          {project.name}
+                        </p>
+                        <p className="text-xs text-slate-400 line-clamp-1">
+                          {project.tagline}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-semibold text-white group-hover:text-purple-300">
-                        {project.name}
-                      </p>
-                      <p className="text-xs text-slate-400 line-clamp-1">
-                        {project.tagline}
-                      </p>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-white transition-colors" />
-                </button>
-              ))
-            ) : (
-              <p className="text-xs text-slate-500 px-2 py-1">No matching projects found.</p>
-            )}
-          </div>
+                    <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-white transition-colors" />
+                  </button>
+                ))
+              ) : (
+                <p className="text-xs text-slate-500 px-2 py-1">No matching projects found.</p>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Footer info */}

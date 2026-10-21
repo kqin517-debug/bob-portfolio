@@ -1,41 +1,41 @@
 "use client";
 
 import React from "react";
-import { Cpu, Layers, Server, Terminal } from "lucide-react";
+import { Cpu, Layers, Terminal } from "lucide-react";
 
 export function TechStackGrid() {
   const stackCategories = [
     {
-      title: "Frontend Engineering & UI",
+      title: "Framework & Language",
       icon: Layers,
       accent: "#3865FF",
       skills: [
-        { name: "React 19 & Next.js 15", note: "App Router / Server Actions / SSG" },
-        { name: "TypeScript", note: "Advanced Type Gym & Generics" },
-        { name: "Tailwind CSS & CSS Tokens", note: "Design Systems & Glassmorphism" },
-        { name: "Framer Motion & WebGL", note: "Fluid Micro-Interactions" },
+        { name: "Next.js 15", note: "App Router / 静态导出" },
+        { name: "React 19", note: "Client Components / Hooks" },
+        { name: "TypeScript 5", note: "严格类型检查" },
+        { name: "Tailwind CSS 3", note: "原子化样式与设计令牌" },
       ],
     },
     {
-      title: "Backend Architecture & Systems",
-      icon: Server,
+      title: "UI & Interaction",
+      icon: Cpu,
+      accent: "#00E5FF",
+      skills: [
+        { name: "Glassmorphism CSS", note: "backdrop-filter / 内阴影高光" },
+        { name: "Lucide React", note: "图标系统" },
+        { name: "IntersectionObserver", note: "滚动高亮导航" },
+        { name: "Clipboard API", note: "一键复制代码" },
+      ],
+    },
+    {
+      title: "Delivery",
+      icon: Terminal,
       accent: "#21FF6B",
       skills: [
-        { name: "Node.js & Bun", note: "High-Throughput Microservices" },
-        { name: "Rust", note: "Wasm & High-Performance CLI Tools" },
-        { name: "PostgreSQL & Prisma", note: "Schema Design & Index Optimization" },
-        { name: "Redis & KV Caches", note: "Distributed State & PubSub" },
-      ],
-    },
-    {
-      title: "DevOps & Modern Toolchain",
-      icon: Terminal,
-      accent: "#FF4C24",
-      skills: [
-        { name: "Docker & Containerization", note: "Multi-Stage Lightweight Builds" },
-        { name: "GitHub Actions CI/CD", note: "Automated Test & Pages Deploy" },
-        { name: "Cloudflare Workers & Edge", note: "Serverless Global Routing" },
-        { name: "Vite, Turbopack, Shiki", note: "Sub-Second Build & Highlighting" },
+        { name: "GitHub Actions", note: "推送 main 自动构建" },
+        { name: "GitHub Pages", note: "静态托管" },
+        { name: "Static Export", note: "next build → out/" },
+        { name: "No Third-Party Analytics", note: "无追踪脚本" },
       ],
     },
   ];
@@ -47,14 +47,14 @@ export function TechStackGrid() {
         <div>
           <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-1">
             <Cpu className="w-3.5 h-3.5" />
-            <span>ARSENAL &amp; CAPABILITIES</span>
+            <span>BUILT WITH</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            技术栈与工程体系 (Tech Arsenal)
+            本站技术栈 (Tech Stack)
           </h2>
         </div>
         <p className="text-xs sm:text-sm text-slate-400 max-w-md">
-          深度打磨现代化全栈与系统工程体系，保障代码从本地开发到高并发上线的极致性能与稳健。
+          这个页面实际使用的框架、样式与部署工具，均可在源码与 package.json 中核对。
         </p>
       </div>
 

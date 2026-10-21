@@ -12,8 +12,14 @@ import { Code2, ArrowUp } from "lucide-react";
 import { GithubIcon } from "@/components/ui/Icons";
 import { profileData } from "@/data/profile";
 import { featuredSnippets } from "@/data/snippets";
+import { featuredProjects } from "@/data/projects";
 
-const SECTION_IDS = ["overview", "snippets", "projects", "tech-stack"] as const;
+const SECTION_IDS = [
+  "overview",
+  "snippets",
+  ...(featuredProjects.length > 0 ? ["projects"] : []),
+  "tech-stack",
+];
 
 export default function HomePage() {
   const [activeSection, setActiveSection] = useState<string>("overview");
@@ -71,12 +77,22 @@ export default function HomePage() {
 
         if (visible.size === 0) return;
 
-        const topMost = Array.from(visible).reduce((a, b) =>
-          a.getBoundingClientRect().top <= b.getBoundingClientRect().top ? a : b
-        );
-        setActiveSection(topMost.id);
+        const viewportHeight = window.innerHeight;
+        const mostVisible = Array.from(visible).reduce((a, b) => {
+          const aRect = a.getBoundingClientRect();
+          const bRect = b.getBoundingClientRect();
+          const aHeight =
+            Math.min(aRect.bottom, viewportHeight) - Math.max(aRect.top, 0);
+          const bHeight =
+            Math.min(bRect.bottom, viewportHeight) - Math.max(bRect.top, 0);
+          return aHeight >= bHeight ? a : b;
+        });
+        setActiveSection(mostVisible.id);
       },
-      { rootMargin: "-80px 0px -55% 0px", threshold: 0 }
+      {
+        rootMargin: "-80px 0px -55% 0px",
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+      }
     );
 
     sections.forEach((section) => observer.observe(section));
@@ -137,7 +153,7 @@ export default function HomePage() {
           />
 
           {/* Section 3: Featured Open Source Projects */}
-          <FeaturedProjects />
+          {featuredProjects.length > 0 && <FeaturedProjects />}
 
           {/* Section 4: Tech Stack Arsenal */}
           <TechStackGrid />
@@ -154,21 +170,25 @@ export default function HomePage() {
                 </span>
                 <span className="text-slate-600">/</span>
                 <span className="font-mono text-[11px] text-slate-400">
-                  Glassmorphism UI Kit Edition
+                  Code &amp; Notes
                 </span>
               </div>
 
               <div className="flex items-center gap-4 text-[11px]">
-                <a
-                  href={profileData.links.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white transition-colors flex items-center gap-1"
-                >
-                  <GithubIcon className="w-3.5 h-3.5" />
-                  <span>GitHub</span>
-                </a>
-                <span className="text-slate-600">·</span>
+                {profileData.links.github && (
+                  <>
+                    <a
+                      href={profileData.links.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-white transition-colors flex items-center gap-1"
+                    >
+                      <GithubIcon className="w-3.5 h-3.5" />
+                      <span>GitHub</span>
+                    </a>
+                    <span className="text-slate-600">·</span>
+                  </>
+                )}
                 <button
                   onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                   className="hover:text-white transition-colors flex items-center gap-1"
@@ -180,7 +200,7 @@ export default function HomePage() {
             </div>
 
             <p className="text-center text-slate-500 text-[11px] mt-4 font-mono">
-              Designed with Figma Glassmorphism UI Kit · Built with Next.js 15, React 19 &amp; Tailwind CSS
+              Built with Next.js 15, React 19 &amp; Tailwind CSS
             </p>
           </footer>
         </div>

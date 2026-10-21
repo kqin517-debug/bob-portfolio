@@ -64,24 +64,28 @@ export function HeaderToolbar({
 
         {/* Social Icons with Glass Hover */}
         <div className="flex items-center gap-1.5">
-          <a
-            href={profileData.links.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08] transition-all"
-            title="GitHub"
-          >
-            <GithubIcon className="w-4 h-4" />
-          </a>
-          <a
-            href={profileData.links.twitter}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08] transition-all"
-            title="Twitter"
-          >
-            <TwitterIcon className="w-4 h-4" />
-          </a>
+          {profileData.links.github && (
+            <a
+              href={profileData.links.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08] transition-all"
+              title="GitHub"
+            >
+              <GithubIcon className="w-4 h-4" />
+            </a>
+          )}
+          {profileData.links.twitter && (
+            <a
+              href={profileData.links.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08] transition-all"
+              title="Twitter"
+            >
+              <TwitterIcon className="w-4 h-4" />
+            </a>
+          )}
           <a
             href={`mailto:${profileData.links.email}`}
             className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-400 hover:text-white hover:bg-white/[0.08] transition-all"

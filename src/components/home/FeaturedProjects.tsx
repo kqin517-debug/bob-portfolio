@@ -20,7 +20,7 @@ export function FeaturedProjects() {
           </h2>
         </div>
         <p className="text-xs sm:text-sm text-slate-400 max-w-md">
-          探索独立设计并落地的开源基础设施、UI 套件与开发者效率工具库。
+          公开项目与技术作品，包含技术栈与源码入口。
         </p>
       </div>
 

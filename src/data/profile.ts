@@ -1,38 +1,31 @@
 export interface ProfileData {
   name: string;
-  role: string;
-  shortRole: string;
+  role?: string;
+  shortRole?: string;
   greeting: string;
-  bio: string;
+  bio?: string;
   avatar: string;
-  status: {
+  status?: {
     state: "available" | "busy" | "focused";
     label: string;
   };
-  focus: string[];
+  focus?: string[];
   links: {
     email: string;
-    github: string;
-    twitter: string;
+    github?: string;
+    twitter?: string;
   };
 }
 
-// 占位个人资料：内容真实化阶段统一替换姓名、简介、状态与链接。
+// 未提供的字段保持缺省，对应 UI 自动隐藏，避免展示虚构信息。
 export const profileData: ProfileData = {
-  name: "Mike Chen",
-  role: "Full-Stack Architect & Open Source Crafter",
-  shortRole: "Full-Stack Crafter",
+  name: "Bob",
+  role: "Developer",
+  shortRole: "Developer",
   greeting: "Hello & Welcome",
-  bio: "专注高质感 Web 应用架构、现代化前端工程与高性能后端服务。追求极致代码美学与轻量级玻璃拟态交互体验。",
   avatar: "/images/avatar.png",
-  status: {
-    state: "available",
-    label: "Available for new projects & collaborations",
-  },
-  focus: ["Next.js 15 App Router", "TypeScript Type Gymnastics", "Rust Systems", "Micro-Interactions"],
   links: {
-    email: "developer@example.com",
-    github: "https://github.com",
-    twitter: "https://twitter.com",
+    email: "kqin517@gmail.com",
+    github: "https://github.com/kqin517-debug",
   },
 };
