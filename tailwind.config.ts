@@ -12,6 +12,7 @@ const config: Config = {
       colors: {
         ink: "#06070c",
         surface: "#0b0e16",
+        muted: "#7b8499",
         accent: {
           DEFAULT: "#8FA8FF",
           strong: "#6E8BFF",

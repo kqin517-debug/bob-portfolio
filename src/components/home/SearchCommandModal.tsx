@@ -131,7 +131,7 @@ export function SearchCommandModal({
         </h2>
 
         <div className="flex items-center gap-3 border-b border-white/[0.06] px-5 py-4 focus-within:bg-white/[0.02] focus-within:ring-1 focus-within:ring-inset focus-within:ring-accent/30">
-          <Search className="h-4 w-4 shrink-0 text-slate-500" />
+          <Search className="h-4 w-4 shrink-0 text-muted" />
           <label htmlFor="search-input" className="sr-only">
             搜索代码片段
           </label>
@@ -146,12 +146,12 @@ export function SearchCommandModal({
                 ? "搜索代码片段、项目或标签…"
                 : "搜索代码片段或标签，例如 debounce、async…"
             }
-            className="flex-1 border-none bg-transparent text-sm text-white placeholder:text-slate-500 focus:outline-none"
+            className="flex-1 border-none bg-transparent text-sm text-white placeholder:text-muted focus:outline-none"
           />
           <button
             onClick={onClose}
             aria-label="关闭搜索"
-            className="rounded-lg p-1 text-slate-500 transition-colors hover:bg-white/[0.06] hover:text-white"
+            className="rounded-lg p-1 text-muted transition-colors hover:bg-white/[0.06] hover:text-white"
           >
             <X className="h-4 w-4" />
           </button>
@@ -159,7 +159,7 @@ export function SearchCommandModal({
 
         <div className="flex-1 space-y-4 overflow-y-auto p-4">
           <div className="space-y-1.5">
-            <span className="px-2 font-mono text-[11px] tracking-wider text-slate-500">
+            <span className="px-2 font-mono text-[11px] tracking-wider text-muted">
               代码片段（{filteredSnippets.length}）
             </span>
             {filteredSnippets.length > 0 ? (
@@ -186,13 +186,13 @@ export function SearchCommandModal({
                       </p>
                     </div>
                   </div>
-                  <span className="shrink-0 rounded bg-white/[0.04] px-2 py-0.5 font-mono text-[11px] text-slate-500">
+                  <span className="shrink-0 rounded bg-white/[0.04] px-2 py-0.5 font-mono text-[11px] text-muted">
                     {snippet.language}
                   </span>
                 </button>
               ))
             ) : (
-              <p className="px-2 py-1 text-xs text-slate-500">
+              <p className="px-2 py-1 text-xs text-muted">
                 没有找到匹配的代码片段。
               </p>
             )}
@@ -200,7 +200,7 @@ export function SearchCommandModal({
 
           {hasProjects && (
             <div className="space-y-1.5 pt-2">
-              <span className="px-2 font-mono text-[11px] tracking-wider text-slate-500">
+              <span className="px-2 font-mono text-[11px] tracking-wider text-muted">
                 项目（{filteredProjects.length}）
               </span>
               {filteredProjects.length > 0 ? (
@@ -227,11 +227,11 @@ export function SearchCommandModal({
                         </p>
                       </div>
                     </div>
-                    <ArrowRight className="h-4 w-4 shrink-0 text-slate-600 transition-colors group-hover:text-slate-300" />
+                    <ArrowRight className="h-4 w-4 shrink-0 text-muted transition-colors group-hover:text-slate-300" />
                   </button>
                 ))
               ) : (
-                <p className="px-2 py-1 text-xs text-slate-500">
+                <p className="px-2 py-1 text-xs text-muted">
                   没有找到匹配的项目。
                 </p>
               )}
@@ -239,7 +239,7 @@ export function SearchCommandModal({
           )}
         </div>
 
-        <div className="flex items-center justify-between border-t border-white/[0.06] bg-white/[0.02] px-5 py-3 font-mono text-[11px] text-slate-500">
+        <div className="flex items-center justify-between border-t border-white/[0.06] bg-white/[0.02] px-5 py-3 font-mono text-[11px] text-muted">
           <span>ESC 关闭</span>
           <span className="flex items-center gap-1.5">
             打开

@@ -11,7 +11,7 @@ export function FeaturedProjects() {
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
-          <div className="mb-2 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">
+          <div className="mb-2 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
             <span className="h-px w-8 bg-accent/50" />
             Projects
           </div>
@@ -64,7 +64,7 @@ export function FeaturedProjects() {
                   <h3 className="text-lg font-semibold text-white transition-colors group-hover:text-accent flex items-center justify-between">
                     <span>{project.name}</span>
                     {hasLinks && (
-                      <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white transition-all transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      <ArrowUpRight className="w-4 h-4 text-muted group-hover:text-white transition-all transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     )}
                   </h3>
                   <p className="text-xs font-medium text-accent">

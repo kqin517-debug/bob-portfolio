@@ -168,7 +168,7 @@ export default function HomePage() {
           <TechStackGrid />
 
           <footer className="border-t border-white/[0.06] pb-10 pt-6">
-            <div className="flex flex-col gap-4 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
               <p>
                 © 2026 {profileData.name} · 用 Next.js 15 与 Tailwind CSS 构建
               </p>

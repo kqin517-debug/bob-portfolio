@@ -52,7 +52,7 @@ export function FeaturedSnippets({
     <section id="snippets" className="scroll-mt-24 space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="mb-2 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">
+          <p className="mb-2 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
             <span className="h-px w-8 bg-accent/50" />
             Snippets
           </p>
@@ -84,8 +84,8 @@ export function FeaturedSnippets({
             >
               {snippet.title.split("：")[0]}
               <span
-                className={`ml-2 font-mono text-[10px] uppercase ${
-                  isSelected ? "text-accent" : "text-slate-500"
+                className={`ml-2 font-mono text-[11px] uppercase ${
+                  isSelected ? "text-accent" : "text-muted"
                 }`}
               >
                 {snippet.language}
@@ -107,7 +107,7 @@ export function FeaturedSnippets({
             <span className="hidden h-4 w-px bg-white/[0.08] sm:block" />
 
             <div className="hidden items-center gap-2 rounded-md border border-white/[0.06] bg-white/[0.03] px-2.5 py-1 font-mono text-[11px] text-slate-400 sm:flex">
-              <FileCode className="h-3.5 w-3.5 text-slate-500" />
+              <FileCode className="h-3.5 w-3.5 text-muted" />
               {currentSnippet.id}.
               {currentSnippet.language === "css" ? "css" : "ts"}
             </div>
@@ -121,7 +121,7 @@ export function FeaturedSnippets({
                 className={`rounded-md px-2.5 py-1 transition-colors ${
                   activeTab === "code"
                     ? "bg-accent-soft text-accent"
-                    : "text-slate-500 hover:text-slate-200"
+                    : "text-muted hover:text-slate-200"
                 }`}
               >
                 代码
@@ -132,7 +132,7 @@ export function FeaturedSnippets({
                 className={`rounded-md px-2.5 py-1 transition-colors ${
                   activeTab === "explanation"
                     ? "bg-accent-soft text-accent"
-                    : "text-slate-500 hover:text-slate-200"
+                    : "text-muted hover:text-slate-200"
                 }`}
               >
                 说明
@@ -182,7 +182,7 @@ export function FeaturedSnippets({
             <h3 className="truncate font-medium text-slate-100">
               {currentSnippet.title}
             </h3>
-            <span className="shrink-0 rounded border border-white/[0.06] bg-white/[0.03] px-1.5 py-0.5 font-mono text-[10px] text-slate-400">
+            <span className="shrink-0 rounded border border-white/[0.06] bg-white/[0.03] px-1.5 py-0.5 font-mono text-[11px] text-slate-400">
               {currentSnippet.complexity}
             </span>
           </div>
@@ -191,7 +191,7 @@ export function FeaturedSnippets({
             {currentSnippet.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded border border-accent/20 bg-accent-soft px-1.5 py-0.5 text-[10px] text-accent"
+                className="rounded border border-accent/20 bg-accent-soft px-1.5 py-0.5 text-[11px] text-accent"
               >
                 #{tag}
               </span>
@@ -208,7 +208,7 @@ export function FeaturedSnippets({
                     key={idx}
                     className="table-row group hover:bg-white/[0.03]"
                   >
-                    <span className="table-cell select-none pr-4 text-right font-mono text-xs text-slate-600 group-hover:text-slate-500 sm:pr-6">
+                    <span className="table-cell select-none pr-4 text-right font-mono text-xs text-muted group-hover:text-slate-400 sm:pr-6">
                       {idx + 1}
                     </span>
                     <span className="table-cell whitespace-pre">
@@ -222,7 +222,7 @@ export function FeaturedSnippets({
         ) : (
           <div className="space-y-6 bg-[#070910] p-5 text-sm leading-[1.8] sm:p-7">
             <div className="space-y-2">
-              <h4 className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-500">
+              <h4 className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
                 核心思路
               </h4>
               <p className="text-pretty text-slate-300">
@@ -232,13 +232,13 @@ export function FeaturedSnippets({
 
             <div className="grid gap-3 border-t border-white/[0.06] pt-5 sm:grid-cols-2">
               <div className="flex items-center justify-between gap-3 text-xs">
-                <span className="text-slate-500">复杂度</span>
+                <span className="text-muted">复杂度</span>
                 <span className="font-mono text-slate-300">
                   {currentSnippet.complexity}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-3 text-xs">
-                <span className="text-slate-500">更新于</span>
+                <span className="text-muted">更新于</span>
                 <span className="font-mono text-slate-300">
                   {currentSnippet.updatedAt}
                 </span>

@@ -13,7 +13,7 @@ export function HeroCockpit({ onNavigateSnippets }: HeroCockpitProps) {
   return (
     <section id="overview" className="scroll-mt-24">
       <div className="max-w-3xl pb-2 pt-4 sm:pt-8">
-        <p className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">
+        <p className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
           <span className="h-px w-8 bg-accent/50" />
           Code Notes
         </p>

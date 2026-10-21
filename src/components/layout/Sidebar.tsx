@@ -130,7 +130,7 @@ export function Sidebar({
           <button
             onClick={() => setIsMobileOpen(false)}
             aria-label="关闭导航"
-            className="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-white/[0.06] hover:text-white lg:hidden"
+            className="rounded-lg p-1.5 text-muted transition-colors hover:bg-white/[0.06] hover:text-white lg:hidden"
           >
             <X className="h-5 w-5" />
           </button>
@@ -142,10 +142,10 @@ export function Sidebar({
             className="flex w-full items-center justify-between rounded-xl border border-white/[0.07] bg-white/[0.03] px-3 py-2.5 text-xs text-slate-400 transition-colors hover:border-white/[0.12] hover:bg-white/[0.06] hover:text-slate-200"
           >
             <span className="flex items-center gap-2.5">
-              <Search className="h-4 w-4 text-slate-500" />
+              <Search className="h-4 w-4 text-muted" />
               搜索代码片段
             </span>
-            <ShortcutHint className="rounded border border-white/[0.08] bg-white/[0.04] px-1.5 py-0.5 font-mono text-[10px] text-slate-500" />
+            <ShortcutHint className="rounded border border-white/[0.08] bg-white/[0.04] px-1.5 py-0.5 font-mono text-[11px] text-muted" />
           </button>
         </div>
 
@@ -168,7 +168,7 @@ export function Sidebar({
                 <span className="flex items-center gap-3">
                   <Icon
                     className={`h-4 w-4 ${
-                      isActive ? "text-accent" : "text-slate-500"
+                      isActive ? "text-accent" : "text-muted"
                     }`}
                   />
                   {item.label}
@@ -176,7 +176,7 @@ export function Sidebar({
                 {typeof item.count === "number" && (
                   <span
                     className={`font-mono text-[11px] tabular-nums ${
-                      isActive ? "text-accent" : "text-slate-500"
+                      isActive ? "text-accent" : "text-muted"
                     }`}
                   >
                     {String(item.count).padStart(2, "0")}
@@ -193,10 +193,10 @@ export function Sidebar({
             className="flex items-center justify-between rounded-xl px-3 py-2 text-xs text-slate-400 transition-colors hover:bg-white/[0.04] hover:text-slate-100"
           >
             <span className="flex items-center gap-2.5">
-              <Mail className="h-4 w-4 text-slate-500" />
+              <Mail className="h-4 w-4 text-muted" />
               邮箱
             </span>
-            <ArrowUpRight className="h-3.5 w-3.5 text-slate-600" />
+            <ArrowUpRight className="h-3.5 w-3.5 text-muted" />
           </a>
 
           {profileData.links.github && (
@@ -207,10 +207,10 @@ export function Sidebar({
               className="flex items-center justify-between rounded-xl px-3 py-2 text-xs text-slate-400 transition-colors hover:bg-white/[0.04] hover:text-slate-100"
             >
               <span className="flex items-center gap-2.5">
-                <GithubIcon className="h-4 w-4 text-slate-500" />
+                <GithubIcon className="h-4 w-4 text-muted" />
                 GitHub
               </span>
-              <ArrowUpRight className="h-3.5 w-3.5 text-slate-600" />
+              <ArrowUpRight className="h-3.5 w-3.5 text-muted" />
             </a>
           )}
         </div>

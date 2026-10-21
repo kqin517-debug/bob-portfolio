@@ -41,7 +41,7 @@ export function TechStackGrid() {
     <section id="tech-stack" className="scroll-mt-24 space-y-5">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="mb-2 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">
+          <p className="mb-2 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
             <span className="h-px w-8 bg-accent/50" />
             Colophon
           </p>
@@ -64,7 +64,7 @@ export function TechStackGrid() {
                 className="md:px-7 md:first:pl-0 md:last:pr-0"
               >
                 <div className="flex items-center gap-2 text-xs font-medium text-slate-200">
-                  <Icon className="h-4 w-4 text-slate-500" />
+                  <Icon className="h-4 w-4 text-muted" />
                   <h3>{category.title}</h3>
                 </div>
 
