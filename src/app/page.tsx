@@ -7,6 +7,7 @@ import { HeroCockpit } from "@/components/home/HeroCockpit";
 import { FeaturedSnippets } from "@/components/home/FeaturedSnippets";
 import { FeaturedProjects } from "@/components/home/FeaturedProjects";
 import { TechStackGrid } from "@/components/home/TechStackGrid";
+import { ContactSection } from "@/components/home/ContactSection";
 import { SearchCommandModal } from "@/components/home/SearchCommandModal";
 import { ArrowUp } from "lucide-react";
 import { GithubIcon } from "@/components/ui/Icons";
@@ -20,6 +21,7 @@ const SECTION_IDS = [
   "snippets",
   ...(featuredProjects.length > 0 ? ["projects"] : []),
   "tech-stack",
+  "contact",
 ];
 
 export default function HomePage() {
@@ -169,6 +171,8 @@ export default function HomePage() {
 
           <TechStackGrid />
 
+          <ContactSection />
+
           <footer className="border-t border-white/[0.06] pb-10 pt-6">
             <div className="flex flex-col gap-4 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
               <p>
@@ -199,6 +203,14 @@ export default function HomePage() {
                   className="transition-colors hover:text-slate-200"
                 >
                   {copied ? "邮箱已复制" : "邮箱"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => scrollToSection("contact")}
+                  className="transition-colors hover:text-slate-200"
+                >
+                  反馈
                 </button>
 
                 <button

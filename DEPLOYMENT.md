@@ -157,6 +157,24 @@ import { assetPath } from "@/lib/utils";
 <Image src={assetPath("/images/your-image.png")} ... />
 ```
 
+### 2.4 联系表单（FormSubmit）
+
+首页「联系」区块是纯静态表单，提交后由 [FormSubmit](https://formsubmit.co/) 把内容转发到
+`src/data/profile.ts` 中 `links.email` 对应的邮箱。访客填写的邮箱会出现在邮件正文里，
+同时被设为 Reply-To，收到邮件后直接回复即可。
+
+**上线后必须先激活一次**：新收件邮箱的第一次提交会触发 FormSubmit 的激活邮件，
+在 `kqin517@gmail.com` 的收件箱中点击确认链接后，后续反馈才会真正送达（激活前的提交不会转发）。
+建议部署完成后先自己提交一条测试反馈，确认激活并收到邮件后，再公开分享站点。
+若没有收到激活邮件，请检查垃圾邮件目录。
+
+- 接收邮箱：修改 `src/data/profile.ts` 的 `links.email`，端点会同步变化；
+  换邮箱后需要重新激活。
+- 邮件主题：在 `src/data/contact.ts` 的 `subject` 中修改。
+- 表单字段：`email`（必填，即回复地址）、`name`（可选）、`message`（必填），
+  另有隐藏的 `_subject` / `_template` / `_captcha` 与蜜罐字段 `_honey`。
+- 本项目不使用 `mailto:`；联系方式统一走复制邮箱或这个表单。
+
 ---
 
 ## 3. 日常维护：新增一个代码片段
@@ -203,6 +221,8 @@ import { assetPath } from "@/lib/utils";
 | 位置 | 现状 |
 | :--- | :--- |
 | `src/data/profile.ts` | 姓名、邮箱、GitHub 为真实信息；Twitter 未配置，对应图标自动隐藏 |
+| `src/data/contact.ts` | FormSubmit 转发端点与反馈邮件主题 |
+| 首页联系区 | 访客填写邮箱与反馈，经 FormSubmit 转发到 Gmail；首次上线需激活 |
 | `src/data/snippets.ts` | 2 条精选片段：`useDebounceFn`、`asyncPool` |
 | `src/data/projects.ts` | 当前为空数组，项目区块、侧栏入口与搜索结果自动隐藏；新增项目后自动出现 |
 | `public/images/` | `avatar.jpg`（头像）、`bg-wave.jpg`（背景） |

@@ -86,6 +86,7 @@ export function Sidebar({
       ? [{ id: "projects", label: "项目", icon: FolderGit2 }]
       : []),
     { id: "tech-stack", label: "技术栈", icon: Cpu },
+    { id: "contact", label: "联系", icon: Mail },
   ];
 
   return (

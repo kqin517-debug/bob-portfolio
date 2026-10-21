@@ -11,6 +11,7 @@ const SECTION_LABELS: Record<string, string> = {
   snippets: "代码片段",
   projects: "项目",
   "tech-stack": "技术栈",
+  contact: "联系",
 };
 
 interface HeaderToolbarProps {
