@@ -1,14 +1,12 @@
-"use client";
-
+import Link from "next/link";
 import { Clock, FileText, GraduationCap } from "lucide-react";
 import { formatDate, type LatestUpdate } from "@/lib/content";
 
 interface LatestUpdatesProps {
   items: LatestUpdate[];
-  onNavigate: (section: string) => void;
 }
 
-export function LatestUpdates({ items, onNavigate }: LatestUpdatesProps) {
+export function LatestUpdates({ items }: LatestUpdatesProps) {
   if (items.length === 0) return null;
 
   return (
@@ -27,9 +25,8 @@ export function LatestUpdates({ items, onNavigate }: LatestUpdatesProps) {
 
           return (
             <li key={item.id}>
-              <button
-                type="button"
-                onClick={() => onNavigate(item.section)}
+              <Link
+                href={item.href}
                 className="group flex w-full items-start gap-2.5 rounded-xl px-3 py-2 text-left transition-colors hover:bg-white/[0.04]"
               >
                 <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted" />
@@ -49,7 +46,7 @@ export function LatestUpdates({ items, onNavigate }: LatestUpdatesProps) {
                     </span>
                   </span>
                 </span>
-              </button>
+              </Link>
             </li>
           );
         })}

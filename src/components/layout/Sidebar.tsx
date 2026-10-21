@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   LayoutDashboard,
   FileText,
@@ -22,6 +23,7 @@ import { papers } from "@/data/papers";
 import { courses } from "@/data/coursework";
 import { getLatestUpdates } from "@/lib/content";
 import { assetPath } from "@/lib/utils";
+import { useTheme } from "@/lib/useTheme";
 import { GithubIcon } from "@/components/ui/Icons";
 import { LatestUpdates } from "@/components/layout/LatestUpdates";
 
@@ -36,9 +38,8 @@ interface NavItem {
   id: string;
   label: string;
   icon: LucideIcon;
+  href?: string;
 }
-
-type Theme = "dark" | "light";
 
 export function Sidebar({
   activeSection,
@@ -47,28 +48,7 @@ export function Sidebar({
   setIsMobileOpen,
 }: SidebarProps) {
   const { copied, copyEmail } = useCopyEmail(profileData.links.email);
-  const [theme, setTheme] = useState<Theme>("dark");
-
-  useEffect(() => {
-    setTheme(
-      document.documentElement.classList.contains("light") ? "light" : "dark"
-    );
-  }, []);
-
-  const applyTheme = (next: Theme) => {
-    const root = document.documentElement;
-
-    root.classList.toggle("light", next === "light");
-    root.classList.toggle("dark", next === "dark");
-
-    try {
-      window.localStorage.setItem("bob-theme", next);
-    } catch {
-      // 隐私模式下无法持久化时，本次会话内仍然可以切换。
-    }
-
-    setTheme(next);
-  };
+  const { theme, applyTheme } = useTheme();
 
   useEffect(() => {
     if (!isMobileOpen) return;
@@ -99,13 +79,20 @@ export function Sidebar({
   const navItems: NavItem[] = [
     { id: "overview", label: "概览", icon: LayoutDashboard },
     ...(papers.length > 0
-      ? [{ id: "papers", label: "论文", icon: FileText }]
+      ? [{ id: "papers", label: "论文", icon: FileText, href: "/papers/" }]
       : []),
     ...(featuredProjects.length > 0
       ? [{ id: "projects", label: "代码项目", icon: FolderGit2 }]
       : []),
     ...(courses.length > 0
-      ? [{ id: "coursework", label: "课程作业", icon: GraduationCap }]
+      ? [
+          {
+            id: "coursework",
+            label: "课程作业",
+            icon: GraduationCap,
+            href: "/coursework/",
+          },
+        ]
       : []),
     { id: "contact", label: "联系", icon: Mail },
   ];
@@ -169,35 +156,54 @@ export function Sidebar({
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeSection === item.id;
+              const itemClassName = `flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm transition-colors ${
+                isActive
+                  ? "glass-menu-active font-medium"
+                  : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-100"
+              }`;
+              const label = (
+                <span className="flex items-center gap-3">
+                  <Icon
+                    className={`h-4 w-4 ${
+                      isActive ? "text-accent" : "text-muted"
+                    }`}
+                  />
+                  {item.label}
+                </span>
+              );
+
+              if (item.href) {
+                return (
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    onClick={() => {
+                      if (window.innerWidth < 1024) {
+                        setIsMobileOpen(false);
+                      }
+                    }}
+                    aria-current={isActive ? "page" : undefined}
+                    className={itemClassName}
+                  >
+                    {label}
+                  </Link>
+                );
+              }
 
               return (
                 <button
                   key={item.id}
                   onClick={() => navigateToSection(item.id)}
                   aria-current={isActive ? "location" : undefined}
-                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm transition-colors ${
-                    isActive
-                      ? "glass-menu-active font-medium"
-                      : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-100"
-                  }`}
+                  className={itemClassName}
                 >
-                  <span className="flex items-center gap-3">
-                    <Icon
-                      className={`h-4 w-4 ${
-                        isActive ? "text-accent" : "text-muted"
-                      }`}
-                    />
-                    {item.label}
-                  </span>
+                  {label}
                 </button>
               );
             })}
           </nav>
 
-          <LatestUpdates
-            items={getLatestUpdates(papers, courses, 3)}
-            onNavigate={navigateToSection}
-          />
+          <LatestUpdates items={getLatestUpdates(papers, courses, 3)} />
 
           <div className="mt-1 space-y-1">
             <button
