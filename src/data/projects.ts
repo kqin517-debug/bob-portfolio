@@ -10,8 +10,7 @@ export interface ProjectItem {
   metrics?: string;
   demoUrl?: string;
   githubUrl?: string;
-  featured: boolean;
 }
 
-// 保持为空时，项目区块、侧栏入口与搜索结果会自动隐藏。
+// 保持为空时，项目区块与侧栏入口会自动隐藏。
 export const featuredProjects: ProjectItem[] = [];

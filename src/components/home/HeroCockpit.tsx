@@ -1,16 +1,11 @@
 "use client";
 
-import React from "react";
-import { ArrowRight, Mail, Check } from "lucide-react";
+import { Mail, Check } from "lucide-react";
 import { GithubIcon } from "@/components/ui/Icons";
 import { profileData } from "@/data/profile";
 import { useCopyEmail } from "@/lib/useCopyEmail";
 
-interface HeroCockpitProps {
-  onNavigateSnippets: () => void;
-}
-
-export function HeroCockpit({ onNavigateSnippets }: HeroCockpitProps) {
+export function HeroCockpit() {
   const { copied, copyEmail } = useCopyEmail(profileData.links.email);
 
   return (
@@ -30,14 +25,6 @@ export function HeroCockpit({ onNavigateSnippets }: HeroCockpitProps) {
         </p>
 
         <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
-          <button
-            onClick={onNavigateSnippets}
-            className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-[#090b12] transition-colors hover:bg-accent-strong"
-          >
-            浏览代码片段
-            <ArrowRight className="h-4 w-4" />
-          </button>
-
           <div className="flex items-center gap-5 text-xs text-slate-400">
             {profileData.links.github && (
               <a

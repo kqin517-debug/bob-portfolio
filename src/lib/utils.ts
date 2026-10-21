@@ -1,10 +1,3 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
 /**
  * Next.js 不会为 public/ 目录下的静态资源自动加上 basePath。
  * 部署到 GitHub Pages 项目子路径 (https://<user>.github.io/<repo>/) 时，

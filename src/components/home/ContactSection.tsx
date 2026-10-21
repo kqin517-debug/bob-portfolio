@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import {
   AlertCircle,
   Check,
@@ -35,7 +35,7 @@ export function ContactSection() {
     status: "idle",
   });
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (submitState.status === "sending") return;
 

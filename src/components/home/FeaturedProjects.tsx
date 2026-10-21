@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { FolderGit2, ExternalLink, Star, ArrowUpRight } from "lucide-react";
+import { ExternalLink, Star, ArrowUpRight } from "lucide-react";
 import { GithubIcon } from "@/components/ui/Icons";
 import { featuredProjects } from "@/data/projects";
 

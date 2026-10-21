@@ -1,34 +1,28 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   LayoutDashboard,
-  Code2,
   FolderGit2,
-  Cpu,
   Mail,
-  Search,
   Settings,
   ArrowUpRight,
   X,
   Copy,
   Check,
+  type LucideIcon,
 } from "lucide-react";
 import { profileData } from "@/data/profile";
 import { useCopyEmail } from "@/lib/useCopyEmail";
-import { featuredSnippets } from "@/data/snippets";
 import { featuredProjects } from "@/data/projects";
 import { assetPath } from "@/lib/utils";
-import { ShortcutHint } from "@/components/ui/ShortcutHint";
 import { GithubIcon } from "@/components/ui/Icons";
 import { AssignmentChecklist } from "@/components/layout/AssignmentChecklist";
-import type { LucideIcon } from "lucide-react";
 
 interface SidebarProps {
   activeSection: string;
   onNavigateSection: (sec: string) => void;
-  onOpenSearch: () => void;
   isMobileOpen: boolean;
   setIsMobileOpen: (open: boolean) => void;
 }
@@ -37,7 +31,6 @@ interface NavItem {
   id: string;
   label: string;
   icon: LucideIcon;
-  count?: number;
 }
 
 type Theme = "dark" | "light";
@@ -45,7 +38,6 @@ type Theme = "dark" | "light";
 export function Sidebar({
   activeSection,
   onNavigateSection,
-  onOpenSearch,
   isMobileOpen,
   setIsMobileOpen,
 }: SidebarProps) {
@@ -101,16 +93,9 @@ export function Sidebar({
 
   const navItems: NavItem[] = [
     { id: "overview", label: "概览", icon: LayoutDashboard },
-    {
-      id: "snippets",
-      label: "代码片段",
-      icon: Code2,
-      count: featuredSnippets.length,
-    },
     ...(featuredProjects.length > 0
       ? [{ id: "projects", label: "项目", icon: FolderGit2 }]
       : []),
-    { id: "tech-stack", label: "技术栈", icon: Cpu },
     { id: "contact", label: "联系", icon: Mail },
   ];
 
@@ -168,19 +153,6 @@ export function Sidebar({
           </button>
         </div>
 
-        <div className="px-4 pb-4">
-          <button
-            onClick={onOpenSearch}
-            className="flex w-full items-center justify-between rounded-xl border border-white/[0.07] bg-white/[0.03] px-3 py-2.5 text-xs text-slate-400 transition-colors hover:border-white/[0.12] hover:bg-white/[0.06] hover:text-slate-200"
-          >
-            <span className="flex items-center gap-2.5">
-              <Search className="h-4 w-4 text-muted" />
-              搜索代码片段
-            </span>
-            <ShortcutHint className="rounded border border-white/[0.08] bg-white/[0.04] px-1.5 py-0.5 font-mono text-[11px] text-muted" />
-          </button>
-        </div>
-
         <div className="flex-1 overflow-y-auto px-3 py-1">
           <nav aria-label="页面导航" className="space-y-1">
             {navItems.map((item) => {
@@ -206,15 +178,6 @@ export function Sidebar({
                     />
                     {item.label}
                   </span>
-                  {typeof item.count === "number" && (
-                    <span
-                      className={`font-mono text-[11px] tabular-nums ${
-                        isActive ? "text-accent" : "text-muted"
-                      }`}
-                    >
-                      {String(item.count).padStart(2, "0")}
-                    </span>
-                  )}
                 </button>
               );
             })}

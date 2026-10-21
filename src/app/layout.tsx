@@ -4,12 +4,10 @@ import { profileData } from "@/data/profile";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: `${profileData.name} 的代码手记 | 代码片段与前端实验`,
-  description:
-    "Bob 的个人开发者主页：收录前端代码片段、工程实践与界面实验。",
+  title: `${profileData.name} 的代码手记 | 工程实践与界面实验`,
+  description: `${profileData.name} 的个人开发者主页：记录工程实践与界面实验。`,
   keywords: [
     "Developer Portfolio",
-    "Code Snippets",
     "Next.js 15",
     "Tailwind CSS",
     "React 19",

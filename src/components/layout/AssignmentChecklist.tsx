@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, ChevronDown, ClipboardList, RotateCcw } from "lucide-react";
 import { assignments } from "@/data/assignments";
 

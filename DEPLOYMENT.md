@@ -149,7 +149,7 @@ OVERRIDE  = <仓库 Variables 里的 PAGES_BASE_PATH，可选>
 > （即"CI 全绿 + 坏站点"）。白名单一次覆盖所有这类情形。
 
 ⚠️ 已修复的坑：Next.js **不会**为 `public/` 目录资源自动加 `basePath`。
-若直接写 `src="/images/avatar.jpg"`，在子路径部署下会 **404**。
+若直接写 `src="/images/avatar.png"`，在子路径部署下会 **404**。
 因此 `src/lib/utils.ts` 提供了 `assetPath()`，新增 public 资源引用时**必须**经过它：
 
 ```tsx
@@ -177,27 +177,7 @@ import { assetPath } from "@/lib/utils";
 
 ---
 
-## 3. 日常维护：新增一个代码片段
-
-编辑 `src/data/snippets.ts`，追加一个对象即可（无需改动任何组件）：
-
-```ts
-{
-  id: "your-snippet-id",          // 唯一标识
-  title: "片段标题：简短说明",
-  category: "React",              // React | TypeScript | CSS/Glass | DevOps | Algorithms
-  language: "typescript",         // 用于语言标签显示
-  badgeColor: "#3865FF",          // 侧边栏圆点颜色
-  description: "一句话描述这个片段解决什么问题。",
-  tags: ["Hooks", "Performance"], // 搜索会匹配标题/描述/标签
-  code: `// 你的代码`,
-  explanation: "核心原理与注意事项。",
-  complexity: "O(1) Memory",
-  updatedAt: "2026-10-20",
-}
-```
-
-侧边栏的片段数量徽标会自动跟随 `featuredSnippets.length`，无需手动同步。
+## 3. 日常维护
 
 新增项目：编辑 `src/data/projects.ts`。其中 `stars`、`metrics`、`demoUrl`、`githubUrl`
 均为可选字段，留空时对应 UI（星标、指标、外链入口）会自动隐藏。
@@ -207,12 +187,7 @@ import { assetPath } from "@/lib/utils";
 
 ## 4. 已知限制（待后续阶段处理）
 
-- **主题固定为深色单主题**：原假的深/浅色切换按钮已移除，`<html>` 固定为 `dark`。
-  若要做浅色主题，需要系统性重做玻璃面板与文字色，留作后续独立设计阶段。
-- **语法高亮为轻量正则实现**：`FeaturedSnippets.tsx` 中的 `highlightSyntax` 只识别 JS/TS 关键字，
-  其他语言的内容不会着色；Shiki 尚未接入。
-- **路由尚未拆分**：目前只有 `/` 一条路由，`/snippets`、`/projects`、`/about` 及片段详情页尚未实现。
-  因此侧边栏的 Analytics 与 Settings 已改为明确的「即将推出」禁用态，而非假装可跳转。
+- **路由尚未拆分**：目前只有 `/` 一条路由，`/projects`、`/about` 尚未实现。
 
 ---
 
@@ -223,8 +198,7 @@ import { assetPath } from "@/lib/utils";
 | `src/data/profile.ts` | 姓名、邮箱、GitHub 为真实信息；Twitter 未配置，对应图标自动隐藏 |
 | `src/data/contact.ts` | FormSubmit 转发端点与反馈邮件主题 |
 | 首页联系区 | 访客填写邮箱与反馈，经 FormSubmit 转发到 Gmail；首次上线需激活 |
-| `src/data/snippets.ts` | 2 条精选片段：`useDebounceFn`、`asyncPool` |
-| `src/data/projects.ts` | 当前为空数组，项目区块、侧栏入口与搜索结果自动隐藏；新增项目后自动出现 |
-| `public/images/` | `avatar.jpg`（头像）、`bg-wave.jpg`（背景） |
+| `src/data/projects.ts` | 当前为空数组，项目区块与侧栏入口自动隐藏；新增项目后自动出现 |
+| `public/images/` | `avatar.png`（头像）、`bg-wave.jpg`（背景） |
 
-Hero 与侧边栏的片段/项目数量均由本地数据派生，不展示虚构数字。
+侧边栏的项目入口由本地数据派生，不展示虚构数字。

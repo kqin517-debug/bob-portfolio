@@ -1,41 +1,27 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { HeaderToolbar } from "@/components/layout/HeaderToolbar";
 import { HeroCockpit } from "@/components/home/HeroCockpit";
-import { FeaturedSnippets } from "@/components/home/FeaturedSnippets";
 import { FeaturedProjects } from "@/components/home/FeaturedProjects";
-import { TechStackGrid } from "@/components/home/TechStackGrid";
 import { ContactSection } from "@/components/home/ContactSection";
-import { SearchCommandModal } from "@/components/home/SearchCommandModal";
 import { ArrowUp } from "lucide-react";
 import { GithubIcon } from "@/components/ui/Icons";
 import { profileData } from "@/data/profile";
-import { featuredSnippets } from "@/data/snippets";
 import { featuredProjects } from "@/data/projects";
 import { useCopyEmail } from "@/lib/useCopyEmail";
 
 const SECTION_IDS = [
   "overview",
-  "snippets",
   ...(featuredProjects.length > 0 ? ["projects"] : []),
-  "tech-stack",
   "contact",
 ];
 
 export default function HomePage() {
   const { copied, copyEmail } = useCopyEmail(profileData.links.email);
   const [activeSection, setActiveSection] = useState<string>("overview");
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-  const [selectedSnippetId, setSelectedSnippetId] = useState(
-    featuredSnippets[0].id
-  );
-  const [snippetSelectionNonce, setSnippetSelectionNonce] = useState(0);
-  const [pendingScrollTarget, setPendingScrollTarget] = useState<string | null>(
-    null
-  );
 
   const scrollToSection = useCallback((sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -59,25 +45,6 @@ export default function HomePage() {
       behavior: reduceMotion ? "auto" : "smooth",
     });
   }, []);
-
-  const openSearch = useCallback(() => {
-    setIsMobileNavOpen(false);
-    setIsSearchOpen(true);
-  }, []);
-
-  const closeSearch = useCallback(() => setIsSearchOpen(false), []);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        openSearch();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [openSearch]);
 
   useEffect(() => {
     const sections = SECTION_IDS.map((id) =>
@@ -123,30 +90,11 @@ export default function HomePage() {
     return () => observer.disconnect();
   }, []);
 
-  // The modal restores body scroll in its effect cleanup, so scrolling must
-  // wait until after that cleanup; scrollIntoView is dropped while locked.
-  useEffect(() => {
-    if (!pendingScrollTarget) return;
-    scrollToSection(pendingScrollTarget);
-    setPendingScrollTarget(null);
-  }, [pendingScrollTarget, scrollToSection]);
-
-  const handleSelectSnippet = (id: string) => {
-    setSelectedSnippetId(id);
-    setSnippetSelectionNonce((nonce) => nonce + 1);
-    setPendingScrollTarget("snippets");
-  };
-
-  const handleSelectProject = () => {
-    setPendingScrollTarget("projects");
-  };
-
   return (
     <div className="flex min-h-screen">
       <Sidebar
         activeSection={activeSection}
         onNavigateSection={scrollToSection}
-        onOpenSearch={openSearch}
         isMobileOpen={isMobileNavOpen}
         setIsMobileOpen={setIsMobileNavOpen}
       />
@@ -154,22 +102,13 @@ export default function HomePage() {
       <main className="mx-auto w-full max-w-7xl flex-1 p-4 transition-all sm:p-6 lg:p-8 lg:pl-80">
         <HeaderToolbar
           onOpenMobileMenu={() => setIsMobileNavOpen(true)}
-          onOpenSearch={openSearch}
           activeSectionTitle={activeSection}
         />
 
         <div className="space-y-16 sm:space-y-20">
-          <HeroCockpit onNavigateSnippets={() => scrollToSection("snippets")} />
-
-          <FeaturedSnippets
-            selectedSnippetId={selectedSnippetId}
-            onSelectedSnippetChange={setSelectedSnippetId}
-            selectionNonce={snippetSelectionNonce}
-          />
+          <HeroCockpit />
 
           {featuredProjects.length > 0 && <FeaturedProjects />}
-
-          <TechStackGrid />
 
           <ContactSection />
 
@@ -224,13 +163,6 @@ export default function HomePage() {
             </div>
           </footer>
         </div>
-
-        <SearchCommandModal
-          isOpen={isSearchOpen}
-          onClose={closeSearch}
-          onSelectSnippet={handleSelectSnippet}
-          onSelectProject={handleSelectProject}
-        />
       </main>
     </div>
   );
