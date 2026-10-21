@@ -88,6 +88,15 @@ export function ContactSection() {
           data.success === "true");
 
       if (!succeeded) {
+        // FormSubmit 首次使用必须先由收件人点击激活链接，期间返回 success:false。
+        // 这和网络故障不同，给访客一个明确的备用联系方式。
+        if (/activation/i.test(data?.message ?? "")) {
+          setSubmitState({
+            status: "error",
+            message: `表单尚未完成首次激活，暂时无法送达。你可以直接发送邮件到 ${profileData.links.email}。`,
+          });
+          return;
+        }
         throw new Error(data?.message || "发送失败");
       }
 
