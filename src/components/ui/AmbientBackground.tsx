@@ -37,7 +37,7 @@ export function AmbientBackground() {
       {/* Boosted brightness & saturation so the radiant wave shines brightly through glass */}
       <div className="absolute inset-0 scale-105 opacity-95 blur-[10px] contrast-115 brightness-135 saturate-135 transition-transform duration-1000 ease-out">
         <Image
-          src={assetPath("/images/bg-wave.png")}
+          src={assetPath("/images/bg-wave.jpg")}
           alt="Chromatic Glass Background Wave"
           fill
           priority

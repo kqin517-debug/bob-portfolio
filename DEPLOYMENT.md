@@ -149,7 +149,7 @@ OVERRIDE  = <仓库 Variables 里的 PAGES_BASE_PATH，可选>
 > （即"CI 全绿 + 坏站点"）。白名单一次覆盖所有这类情形。
 
 ⚠️ 已修复的坑：Next.js **不会**为 `public/` 目录资源自动加 `basePath`。
-若直接写 `src="/images/avatar.png"`，在子路径部署下会 **404**。
+若直接写 `src="/images/avatar.jpg"`，在子路径部署下会 **404**。
 因此 `src/lib/utils.ts` 提供了 `assetPath()`，新增 public 资源引用时**必须**经过它：
 
 ```tsx
@@ -180,12 +180,10 @@ import { assetPath } from "@/lib/utils";
 ```
 
 侧边栏的片段数量徽标会自动跟随 `featuredSnippets.length`，无需手动同步。
-（**当前为占位示例数据**，见下方第 5 节。）
 
 新增项目：编辑 `src/data/projects.ts`。其中 `stars`、`metrics`、`demoUrl`、`githubUrl`
 均为可选字段，留空时对应 UI（星标、指标、外链入口）会自动隐藏。
-修改个人信息与社交链接：编辑 `src/data/profile.ts`（`links` 统一提供邮箱 / GitHub / Twitter）。
-个人身份与链接仍为占位值，见下方第 5 节。
+修改个人信息与社交链接：编辑 `src/data/profile.ts`（`links` 提供邮箱、GitHub，Twitter 可选）。
 
 ---
 
@@ -194,23 +192,19 @@ import { assetPath } from "@/lib/utils";
 - **主题固定为深色单主题**：原假的深/浅色切换按钮已移除，`<html>` 固定为 `dark`。
   若要做浅色主题，需要系统性重做玻璃面板与文字色，留作后续独立设计阶段。
 - **语法高亮为轻量正则实现**：`FeaturedSnippets.tsx` 中的 `highlightSyntax` 只识别 JS/TS 关键字，
-  非 JS/TS 语言（如已有片段中的 CSS）不会着色。方案中的 Shiki 尚未接入。
+  其他语言的内容不会着色；Shiki 尚未接入。
 - **路由尚未拆分**：目前只有 `/` 一条路由，`/snippets`、`/projects`、`/about` 及片段详情页尚未实现。
   因此侧边栏的 Analytics 与 Settings 已改为明确的「即将推出」禁用态，而非假装可跳转。
 
 ---
 
-## 5. 待替换的占位内容（需要你提供真实信息）
+## 5. 当前内容状态
 
-以下内容目前是占位值，替换前请勿公开部署：
-
-| 位置 | 当前占位值 |
+| 位置 | 现状 |
 | :--- | :--- |
-| `src/data/profile.ts` | 姓名 `Mike Chen`、邮箱 `developer@example.com`、通用 GitHub / Twitter 链接、bio、状态与头像 |
-| `src/data/snippets.ts` | 3 条示例代码片段及其说明 |
-| `src/data/projects.ts` | 3 个示例项目文案；`stars` / `metrics` / 外链已清空，字段保留为可选 |
-| `src/app/page.tsx` 页脚 | 页脚标识与设计说明 |
+| `src/data/profile.ts` | 姓名、邮箱、GitHub 为真实信息；Twitter 未配置，对应图标自动隐藏 |
+| `src/data/snippets.ts` | 2 条精选片段：`useDebounceFn`、`asyncPool` |
+| `src/data/projects.ts` | 当前为空数组，项目区块、侧栏入口与搜索结果自动隐藏；新增项目后自动出现 |
+| `public/images/` | `avatar.jpg`（头像）、`bg-wave.jpg`（背景） |
 
-Hero 的 `Code Snippets` / `Featured Projects` 数量由本地数据派生，不再展示虚构数字。
-技能百分比、通知铃铛角标、`v2.5`、`Verified 2026`、`Production Ready` 等已移除。
-在替换真实身份、项目与片段内容之前，仍请勿公开部署。
+Hero 与侧边栏的片段/项目数量均由本地数据派生，不展示虚构数字。

@@ -23,7 +23,7 @@ export const profileData: ProfileData = {
   role: "Developer",
   shortRole: "Developer",
   greeting: "Hello & Welcome",
-  avatar: "/images/avatar.png",
+  avatar: "/images/avatar.jpg",
   links: {
     email: "kqin517@gmail.com",
     github: "https://github.com/kqin517-debug",
