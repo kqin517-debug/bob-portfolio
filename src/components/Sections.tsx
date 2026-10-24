@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import type { DownloadableFile, PageContent, SkillNode } from '../content';
 
 interface SectionsProps {
   copy: PageContent;
 }
 
-type CopyStatus = 'idle' | 'success' | 'error';
+type TicketStatus = 'idle' | 'submitting' | 'success' | 'error';
 
 interface DownloadFileProps {
   file: DownloadableFile;
@@ -106,18 +106,155 @@ function SkillTree({
   );
 }
 
-export function Sections({ copy }: SectionsProps) {
-  const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
+function ContactForm({ copy }: { copy: PageContent['contact'] }) {
+  const [status, setStatus] = useState<TicketStatus>('idle');
+  const [ticketId, setTicketId] = useState('');
+  const [error, setError] = useState('');
 
-  const copyEmail = async () => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formElement = event.currentTarget;
+    const data = new FormData(formElement);
+    const name = String(data.get('name') ?? '').trim();
+    const email = String(data.get('email') ?? '').trim();
+    const subject = String(data.get('subject') ?? '').trim();
+    const message = String(data.get('message') ?? '').trim();
+    const website = String(data.get('website') ?? '');
+    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+    if (!name || !emailPattern.test(email) || message.length < 5) {
+      setError(copy.form.required);
+      setStatus('error');
+      return;
+    }
+
+    setError('');
+    setStatus('submitting');
+
     try {
-      await navigator.clipboard.writeText(copy.contact.email);
-      setCopyStatus('success');
+      const response = await fetch('/api/tickets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, subject, message, website }),
+      });
+      const result = (await response.json().catch(() => null)) as
+        | { ok?: boolean; ticket?: { id?: string } }
+        | null;
+
+      if (!response.ok || !result?.ok || !result.ticket?.id) {
+        throw new Error('request failed');
+      }
+
+      setTicketId(result.ticket.id);
+      setStatus('success');
+      formElement.reset();
     } catch {
-      setCopyStatus('error');
+      setError(copy.form.error);
+      setStatus('error');
     }
   };
 
+  if (status === 'success') {
+    return (
+      <div className="contact-form contact-success" role="status">
+        <p className="contact-success-kicker">{copy.form.successTitle}</p>
+        <p className="contact-success-body">{copy.form.successBody}</p>
+        <p className="contact-ticket-id">{ticketId}</p>
+        <button
+          className="button button-outline contact-success-button"
+          type="button"
+          onClick={() => {
+            setStatus('idle');
+            setTicketId('');
+          }}
+        >
+          {copy.form.successAgain}
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <form
+      className="contact-form"
+      onSubmit={handleSubmit}
+      aria-busy={status === 'submitting'}
+      noValidate
+    >
+      <div className="contact-form-grid">
+        <div className="contact-field">
+          <label htmlFor="contact-name">{copy.form.name}</label>
+          <input
+            id="contact-name"
+            name="name"
+            type="text"
+            autoComplete="name"
+            maxLength={100}
+            placeholder={copy.form.namePlaceholder}
+          />
+        </div>
+        <div className="contact-field">
+          <label htmlFor="contact-email">{copy.form.email}</label>
+          <input
+            id="contact-email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            maxLength={200}
+            placeholder={copy.form.emailPlaceholder}
+          />
+        </div>
+        <div className="contact-field contact-field-full">
+          <label htmlFor="contact-subject">{copy.form.subject}</label>
+          <input
+            id="contact-subject"
+            name="subject"
+            type="text"
+            maxLength={200}
+            placeholder={copy.form.subjectPlaceholder}
+          />
+        </div>
+        <div className="contact-field contact-field-full">
+          <label htmlFor="contact-message">{copy.form.message}</label>
+          <textarea
+            id="contact-message"
+            name="message"
+            rows={6}
+            maxLength={5000}
+            placeholder={copy.form.messagePlaceholder}
+          />
+        </div>
+      </div>
+      <div className="contact-honeypot" aria-hidden="true">
+        <label htmlFor="contact-website">Website</label>
+        <input
+          id="contact-website"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </div>
+      <div className="contact-form-footer">
+        <p className="contact-note">{copy.form.note}</p>
+        <button
+          className="button button-dark contact-submit"
+          type="submit"
+          disabled={status === 'submitting'}
+        >
+          {status === 'submitting' ? copy.form.submitting : copy.form.submit}
+        </button>
+      </div>
+      {status === 'error' && (
+        <p className="contact-status error" role="alert">
+          {error}
+        </p>
+      )}
+    </form>
+  );
+}
+
+export function Sections({ copy }: SectionsProps) {
   return (
     <>
       <section id="about" className="section about-section page-shell" aria-labelledby="about-title">
@@ -175,11 +312,7 @@ export function Sections({ copy }: SectionsProps) {
       <section id="contact" className="section contact-section page-shell" aria-labelledby="contact-title">
         <h2 id="contact-title" className="contact-title">{copy.contact.title}</h2>
         <p className="contact-body">{copy.contact.body}</p>
-        <p className="contact-email">{copy.contact.email}</p>
-        <button className="button button-dark contact-button" type="button" onClick={copyEmail}>{copy.contact.copy}</button>
-        <p className={`contact-status ${copyStatus}`} role="status">
-          {copyStatus === 'success' ? copy.contact.copied : copyStatus === 'error' ? copy.contact.copyError : ''}
-        </p>
+        <ContactForm copy={copy.contact} />
       </section>
     </>
   );

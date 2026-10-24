@@ -1,0 +1,1 @@
+gh-deploy ALL=(root) NOPASSWD: /usr/bin/systemctl restart bob-tickets.service, /usr/bin/systemctl is-active bob-tickets.service

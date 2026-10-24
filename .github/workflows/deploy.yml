@@ -51,3 +51,33 @@ jobs:
           rsync -az --delete \
             -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" \
             dist/ "$VPS_USER@$VPS_HOST:$VPS_PATH/"
+
+      - name: Publish ticket service
+        run: |
+          rsync -az \
+            -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes" \
+            server/ "$VPS_USER@$VPS_HOST:/opt/bob-tickets/"
+
+      - name: Configure ticket notifications
+        if: ${{ secrets.SMTP_PASS != '' }}
+        env:
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          NOTIFY_TO: ${{ secrets.NOTIFY_TO }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            "$VPS_USER@$VPS_HOST" "umask 077; cat > /opt/bob-tickets/.env" <<EOF
+          SMTP_USER=$SMTP_USER
+          SMTP_PASS=$SMTP_PASS
+          NOTIFY_TO=$NOTIFY_TO
+          EOF
+
+      - name: Restart ticket service
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            "$VPS_USER@$VPS_HOST" "sudo /usr/bin/systemctl restart bob-tickets.service"
+
+      - name: Verify ticket service
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            "$VPS_USER@$VPS_HOST" "curl -fsS http://127.0.0.1:8787/api/health"

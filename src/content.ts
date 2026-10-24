@@ -73,10 +73,24 @@ export interface PageContent {
   contact: {
     title: string;
     body: string;
-    email: string;
-    copy: string;
-    copied: string;
-    copyError: string;
+    form: {
+      name: string;
+      namePlaceholder: string;
+      email: string;
+      emailPlaceholder: string;
+      subject: string;
+      subjectPlaceholder: string;
+      message: string;
+      messagePlaceholder: string;
+      submit: string;
+      submitting: string;
+      note: string;
+      successTitle: string;
+      successBody: string;
+      successAgain: string;
+      error: string;
+      required: string;
+    };
   };
   footer: {
     note: string;
@@ -192,11 +206,25 @@ export const content: Record<Language, PageContent> = {
     },
     contact: {
       title: 'Let’s make something thoughtful.',
-      body: 'Have a project, an opportunity, or just a good question? I’d love to hear from you.',
-      email: 'hello@example.com',
-      copy: 'Copy email address',
-      copied: 'Email address copied',
-      copyError: 'Copy failed. Please select the email address above.',
+      body: 'Have a project, an opportunity, or just a good question? Send a ticket and I’ll get back to you.',
+      form: {
+        name: 'Name',
+        namePlaceholder: 'How should I address you?',
+        email: 'Email',
+        emailPlaceholder: 'you@example.com',
+        subject: 'Subject',
+        subjectPlaceholder: 'What would you like to talk about?',
+        message: 'Message',
+        messagePlaceholder: 'Share a project, an opportunity, or a question…',
+        submit: 'Submit ticket',
+        submitting: 'Sending…',
+        note: 'Your email is only used to reply. It will not be published on this site.',
+        successTitle: 'Ticket received.',
+        successBody: 'I’ll reply to the email you left. Your ticket number is',
+        successAgain: 'Send another ticket',
+        error: 'The ticket could not be sent. Please try again in a moment.',
+        required: 'Please enter your name, a valid email, and a message of at least 5 characters.',
+      },
     },
     footer: {
       note: 'A portfolio of questions, ideas, and things made with care.',
@@ -304,11 +332,25 @@ export const content: Record<Language, PageContent> = {
     },
     contact: {
       title: '一起做点有意义的事。',
-      body: '有一个项目、一个机会，或只是一个好问题？都欢迎和我聊聊。',
-      email: 'hello@example.com',
-      copy: '复制邮箱地址',
-      copied: '邮箱地址已复制',
-      copyError: '复制失败，请手动选择上方邮箱。',
+      body: '有项目、机会，或只是一个好问题？提交一张工单，我会尽快回复你。',
+      form: {
+        name: '称呼',
+        namePlaceholder: '我该怎么称呼你？',
+        email: '邮箱',
+        emailPlaceholder: 'you@example.com',
+        subject: '主题',
+        subjectPlaceholder: '想聊些什么？',
+        message: '内容',
+        messagePlaceholder: '项目、机会，或任何想问的问题……',
+        submit: '提交工单',
+        submitting: '提交中…',
+        note: '邮箱只用于回复，不会公开在本站。',
+        successTitle: '工单已收到。',
+        successBody: '我会通过你留下的邮箱回复。你的工单号是',
+        successAgain: '再提交一张',
+        error: '工单提交失败，请稍后再试。',
+        required: '请填写称呼、有效邮箱，以及至少 5 个字符的内容。',
+      },
     },
     footer: {
       note: '收集问题、想法，以及每一份认真完成的项目。',

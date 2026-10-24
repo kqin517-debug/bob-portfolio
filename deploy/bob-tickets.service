@@ -1,0 +1,31 @@
+[Unit]
+Description=Bob portfolio ticket service
+After=network.target
+
+[Service]
+Type=simple
+User=gh-deploy
+Group=gh-deploy
+WorkingDirectory=/opt/bob-tickets
+EnvironmentFile=-/opt/bob-tickets/.env
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 /opt/bob-tickets/tickets.py
+Restart=always
+RestartSec=3
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/bob-tickets
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=bob-tickets
+
+[Install]
+WantedBy=multi-user.target

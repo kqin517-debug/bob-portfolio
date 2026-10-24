@@ -1,5 +1,7 @@
 node_modules/
 dist/
 vibe_images/
+.tmp/
+.env
 .DS_Store
 *.local

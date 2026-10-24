@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#faf9f5" />
+    <link rel="icon" type="image/png" href="/images/avatar.png" />
+    <title>Bob · 工单后台</title>
+    <style>
+      :root {
+        color: #141413;
+        background: #faf9f5;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        --paper: #faf9f5;
+        --ink: #141413;
+        --muted: #68645d;
+        --line: #d1cfc5;
+        --serif: Georgia, "Noto Serif SC", "Songti SC", serif;
+        --danger: #9c4035;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        background: var(--paper);
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .page {
+        width: min(100% - 48px, 1080px);
+        margin-inline: auto;
+        padding: 44px 0 72px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+        padding-bottom: 28px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-family: var(--serif);
+        font-size: clamp(36px, 5vw, 48px);
+        font-weight: 500;
+        letter-spacing: -1px;
+        line-height: 1.05;
+      }
+
+      .sub {
+        max-width: 520px;
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.65;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 7px 16px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        color: var(--ink);
+        background: transparent;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1.5;
+        transition: background-color 160ms ease, border-color 160ms ease;
+      }
+
+      .button:hover {
+        border-color: #aaa79e;
+        background: #f3f1eb;
+      }
+
+      .button:disabled {
+        cursor: wait;
+        opacity: 0.6;
+      }
+
+      .button-dark {
+        border-color: var(--ink);
+        color: var(--paper);
+        background: var(--ink);
+      }
+
+      .button-dark:hover {
+        border-color: #353532;
+        background: #353532;
+      }
+
+      .button.small {
+        min-height: 34px;
+        padding: 6px 13px;
+        border-radius: 8px;
+        font-size: 13px;
+      }
+
+      .button.danger {
+        color: var(--danger);
+        border-color: #d8b9b1;
+      }
+
+      .button.danger:hover {
+        background: #f7ece8;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        margin: 28px 0 18px;
+      }
+
+      .filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .filter {
+        min-height: 34px;
+        padding: 6px 14px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--muted);
+        background: transparent;
+        cursor: pointer;
+        font-size: 13px;
+      }
+
+      .filter:hover {
+        border-color: #aaa79e;
+      }
+
+      .filter.active {
+        border-color: var(--ink);
+        color: var(--paper);
+        background: var(--ink);
+      }
+
+      .counts {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .status {
+        min-height: 22px;
+        margin: 0 0 14px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .status.error {
+        color: var(--danger);
+      }
+
+      .tickets {
+        display: grid;
+        gap: 16px;
+      }
+
+      .ticket {
+        padding: 22px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.38);
+      }
+
+      .ticket-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .ticket-heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .ticket-id {
+        color: var(--muted);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 22px;
+        padding: 2px 9px;
+        border-radius: 999px;
+        font-size: 12px;
+        line-height: 1.4;
+      }
+
+      .badge.open {
+        color: #7a4b2e;
+        background: #f1e4d8;
+      }
+
+      .badge.closed {
+        color: #4f5d4c;
+        background: #e8ece5;
+      }
+
+      .ticket-time {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .ticket-subject {
+        margin: 14px 0 8px;
+        font-family: var(--serif);
+        font-size: 23px;
+        font-weight: 500;
+        line-height: 1.3;
+        overflow-wrap: anywhere;
+      }
+
+      .ticket-meta {
+        display: flex;
+        gap: 8px 18px;
+        flex-wrap: wrap;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .ticket-meta a {
+        color: var(--ink);
+        text-underline-offset: 3px;
+      }
+
+      .ticket-message {
+        max-height: 360px;
+        margin: 14px 0 0;
+        padding: 14px 16px;
+        overflow: auto;
+        border-radius: 12px;
+        color: var(--ink);
+        background: #f4f2ec;
+        font-family: inherit;
+        font-size: 14px;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+      }
+
+      .ticket-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 16px;
+      }
+
+      .empty {
+        padding: 64px 20px;
+        border: 1px dashed var(--line);
+        border-radius: 18px;
+        color: var(--muted);
+        text-align: center;
+        font-size: 15px;
+      }
+
+      .footnote {
+        margin: 36px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      @media (max-width: 640px) {
+        .page {
+          width: min(100% - 32px, 1080px);
+          padding: 28px 0 56px;
+        }
+
+        .topbar {
+          flex-wrap: wrap;
+        }
+
+        .ticket {
+          padding: 18px;
+          border-radius: 15px;
+        }
+
+        .ticket-subject {
+          font-size: 20px;
+        }
+
+        .ticket-actions .button {
+          flex: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Bob · Portfolio</p>
+          <h1>工单后台</h1>
+          <p class="sub">访客通过网站提交的联系信息会显示在这里。请定期查看并回复。</p>
+        </div>
+        <button id="refresh" class="button button-dark" type="button">刷新</button>
+      </header>
+
+      <div class="toolbar">
+        <div class="filters" role="group" aria-label="筛选工单">
+          <button class="filter active" type="button" data-filter="all">全部</button>
+          <button class="filter" type="button" data-filter="open">待处理</button>
+          <button class="filter" type="button" data-filter="closed">已处理</button>
+        </div>
+        <p id="counts" class="counts" aria-live="polite"></p>
+      </div>
+
+      <p id="status" class="status" role="status"></p>
+      <section id="tickets" class="tickets" aria-label="工单列表"></section>
+      <p class="footnote">此页面受密码保护，请勿把链接和密码分享给他人。工单数据保存在你的服务器上。</p>
+    </div>
+
+    <script>
+      const state = {
+        tickets: [],
+        counts: { open: 0, closed: 0 },
+        filter: 'all',
+      };
+
+      const ticketsRoot = document.getElementById('tickets');
+      const countsNode = document.getElementById('counts');
+      const statusNode = document.getElementById('status');
+      const refreshButton = document.getElementById('refresh');
+      const filterButtons = Array.from(document.querySelectorAll('.filter'));
+
+      function setStatus(message, isError = false) {
+        statusNode.textContent = message;
+        statusNode.classList.toggle('error', isError);
+      }
+
+      function formatDate(value) {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return value;
+        return date.toLocaleString('zh-CN', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        });
+      }
+
+      function element(tag, className, text) {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined) node.textContent = text;
+        return node;
+      }
+
+      function render() {
+        countsNode.textContent =
+          `待处理 ${state.counts.open} · 已处理 ${state.counts.closed} · 共 ${state.counts.open + state.counts.closed}`;
+
+        const visible = state.tickets.filter((ticket) => {
+          return state.filter === 'all' || ticket.status === state.filter;
+        });
+
+        ticketsRoot.replaceChildren();
+
+        if (visible.length === 0) {
+          ticketsRoot.append(element('div', 'empty', '暂无工单。'));
+          return;
+        }
+
+        visible.forEach((ticket) => {
+          const card = element('article', 'ticket');
+          const top = element('div', 'ticket-top');
+          const heading = element('div', 'ticket-heading');
+          heading.append(element('span', 'ticket-id', ticket.id));
+          heading.append(
+            element(
+              'span',
+              `badge ${ticket.status === 'closed' ? 'closed' : 'open'}`,
+              ticket.status === 'closed' ? '已处理' : '待处理'
+            )
+          );
+          top.append(heading);
+          top.append(element('time', 'ticket-time', formatDate(ticket.createdAt)));
+
+          const subject = element('h2', 'ticket-subject', ticket.subject);
+          const meta = element('div', 'ticket-meta');
+          meta.append(element('span', '', `称呼：${ticket.name}`));
+          const mail = document.createElement('a');
+          mail.href = `mailto:${ticket.email}?subject=${encodeURIComponent(
+            `Re: ${ticket.subject} [${ticket.id}]`
+          )}`;
+          mail.textContent = ticket.email;
+          meta.append(mail);
+          if (ticket.ip) {
+            meta.append(element('span', '', `IP：${ticket.ip}`));
+          }
+
+          const message = element('pre', 'ticket-message', ticket.message);
+
+          const actions = element('div', 'ticket-actions');
+          const toggle = element(
+            'button',
+            'button small',
+            ticket.status === 'closed' ? '重新打开' : '标记已处理'
+          );
+          toggle.type = 'button';
+          toggle.addEventListener('click', () => {
+            updateTicket(ticket.id, ticket.status === 'closed' ? 'open' : 'closed');
+          });
+
+          const remove = element('button', 'button small danger', '删除');
+          remove.type = 'button';
+          remove.addEventListener('click', () => {
+            deleteTicket(ticket.id);
+          });
+
+          actions.append(toggle, remove);
+          card.append(top, subject, meta, message, actions);
+          ticketsRoot.append(card);
+        });
+      }
+
+      async function load() {
+        refreshButton.disabled = true;
+        setStatus('正在加载…');
+        try {
+          const response = await fetch('/api/admin/tickets', { cache: 'no-store' });
+          if (response.status === 401) {
+            setStatus('登录已失效，请刷新页面并重新输入后台密码。', true);
+            return;
+          }
+          if (!response.ok) throw new Error('request failed');
+          const data = await response.json();
+          if (!data.ok) throw new Error('request failed');
+          state.tickets = data.tickets;
+          state.counts = data.counts;
+          setStatus('');
+          render();
+        } catch {
+          setStatus('加载失败，请稍后刷新重试。', true);
+        } finally {
+          refreshButton.disabled = false;
+        }
+      }
+
+      async function updateTicket(id, status) {
+        setStatus('正在更新…');
+        try {
+          const response = await fetch(`/api/admin/tickets/${encodeURIComponent(id)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status }),
+          });
+          if (!response.ok) throw new Error('request failed');
+          await load();
+        } catch {
+          setStatus('操作失败，请重试。', true);
+        }
+      }
+
+      async function deleteTicket(id) {
+        if (!window.confirm('确定删除这张工单吗？删除后无法恢复。')) return;
+        setStatus('正在删除…');
+        try {
+          const response = await fetch(`/api/admin/tickets/${encodeURIComponent(id)}`, {
+            method: 'DELETE',
+          });
+          if (!response.ok) throw new Error('request failed');
+          await load();
+        } catch {
+          setStatus('删除失败，请重试。', true);
+        }
+      }
+
+      filterButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          state.filter = button.dataset.filter;
+          filterButtons.forEach((item) => item.classList.toggle('active', item === button));
+          render();
+        });
+      });
+
+      refreshButton.addEventListener('click', load);
+      load();
+    </script>
+  </body>
+</html>
