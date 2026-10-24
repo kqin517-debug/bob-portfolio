@@ -1,0 +1,21 @@
+[Unit]
+Description=Encrypted backup of Bob portfolio tickets to Google Drive
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=gh-deploy
+Group=gh-deploy
+Environment=HOME=/home/gh-deploy
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+ExecStart=/home/gh-deploy/bin/bob-backup.sh
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/home/gh-deploy
+RestrictSUIDSGID=true
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=bob-backup

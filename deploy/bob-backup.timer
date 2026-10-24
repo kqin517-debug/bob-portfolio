@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily encrypted ticket backup to Google Drive
+
+[Timer]
+OnCalendar=*-*-* 19:15:00 UTC
+Persistent=true
+RandomizedDelaySec=10m
+
+[Install]
+WantedBy=timers.target
