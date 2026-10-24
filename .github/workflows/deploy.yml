@@ -59,7 +59,6 @@ jobs:
             server/ "$VPS_USER@$VPS_HOST:/opt/bob-tickets/"
 
       - name: Configure ticket notifications
-        if: ${{ secrets.SMTP_PASS != '' }}
         env:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
